@@ -20,10 +20,10 @@ async def faq_handler(message: hikari.MessageCreateEvent):
 
     bot_channel_id = plugin.bot.d.config['bot'][ 'channel']
     guild_id = plugin.bot.d.config['bot']['guild']
-
     bot_channel: hikari.GuildTextChannel = await plugin.bot.rest.fetch_channel(bot_channel_id)
     message_channel: hikari.GuildTextChannel = await plugin.bot.rest.fetch_channel(message.channel_id)
     guild: hikari.Guild = await message_channel.fetch_guild()
+
     if not guild.id == guild_id:
         return
         
@@ -55,7 +55,6 @@ async def faq_handler(message: hikari.MessageCreateEvent):
 @lightbulb.command('add', 'Adds a FAQ command')
 @lightbulb.implements(commands.PrefixCommand)
 async def add(ctx: lightbulb.context.Context) -> None:
-    """usage: `command` `description`"""
     command, description = ctx.options.command, ctx.options.description
     await plugin.bot.d.db.create(command, description)
     return await ctx.respond(f'{command} added.')
@@ -67,7 +66,6 @@ async def add(ctx: lightbulb.context.Context) -> None:
 @lightbulb.command('update', 'Updates a FAQ command')
 @lightbulb.implements(commands.PrefixCommand)
 async def update(ctx: lightbulb.context.Context) -> None:
-    """usage: `command` `description`"""
     command, description = ctx.options.command, ctx.options.description
     await plugin.bot.d.db.update(command, description)
     return await ctx.respond(f'{command} updated.')
@@ -78,7 +76,6 @@ async def update(ctx: lightbulb.context.Context) -> None:
 @lightbulb.command('delete', 'Deletes a FAQ command')
 @lightbulb.implements(commands.PrefixCommand)
 async def add(ctx: lightbulb.context.Context) -> None:
-    """usage: `command`"""
     command = ctx.options.command
     await plugin.bot.d.db.delete(command)
     return await ctx.respond(f'{command} deleted.')

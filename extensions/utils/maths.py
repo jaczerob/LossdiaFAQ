@@ -14,3 +14,7 @@ def calc_magic(monster_hp: int, modifier: float = 1.0):
 
     magic = min([math.ceil(num) for num in solution if num >= 0.0])
     return magic
+
+
+def round_to_nearest(place: int, num: int):
+    return int(math.ceil(num / place)) * place

@@ -49,19 +49,21 @@ async def on_error(event: lightbulb.CommandErrorEvent) -> None:
 
 @bot.check()
 async def bot_channel_only(ctx: lightbulb.context.Context):
-    if not ctx.channel_id:
+    if ctx.author == bot.application.owner:
+        return True
+
+    if not ctx.channel_id: # no one can use in DMs
         return False
 
     message_channel: hikari.GuildTextChannel = await bot.rest.fetch_channel(ctx.channel_id)
     guild: hikari.Guild = await message_channel.fetch_guild()
+    member = guild.get_member(ctx.author.id)
+
     if not guild.id == bot.d.config['bot']['guild']:
         return False
-        
-    member = guild.get_member(ctx.author.id)
-    return True if member.get_top_role().permissions.MANAGE_MESSAGES\
-        or message_channel.id == bot.d.config['bot']['channel']\
-        or member.user == bot.application.owner\
-        else False
+
+    # moderators can use anywhere, else only use in the bot channel
+    return any((member.get_top_role().permissions.MANAGE_MESSAGES, message_channel.id == bot.d.config['bot']['channel']))
 
 
 async def cleanup():

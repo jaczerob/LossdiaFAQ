@@ -1,2 +1,2 @@
-from .ees import sample as simulate_ees
-from .maths import calc_magic
+from .ees import sample
+from .maths import calc_magic, round_to_nearest

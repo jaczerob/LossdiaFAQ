@@ -10,7 +10,7 @@ plugin.add_checks(lightbulb.checks.owner_only)
 @lightbulb.command('admin', 'The base admin command')
 @lightbulb.implements(commands.PrefixCommandGroup)
 async def admin(ctx: lightbulb.context.Context) -> None:
-    return await ctx.respond('Type "olivia rodrigo help admin" for admin commands')
+    return await ctx.respond('Type "$help admin" for admin commands')
 
 
 @admin.child()

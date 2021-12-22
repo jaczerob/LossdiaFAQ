@@ -7,8 +7,7 @@ import hikari
 import lightbulb
 from lightbulb import commands
 
-from extensions.utils import simulate_ees
-from extensions.utils import calc_magic
+from extensions.utils import sample, calc_magic, round_to_nearest
 
 
 plugin = lightbulb.Plugin('Utilities', 'Utility commands and handlers')
@@ -42,11 +41,9 @@ async def magic(ctx: lightbulb.context.Context):
         modifiers_msg += f'BW Elemental Amp: 1.30x\n'
         modifiers_msg += f'FP/IL Elemental Amp: 1.40x\n\n'
 
-        # F/P and I/L
         fpil_magic = calc_magic(monster_hp=hp, modifier=modifier * 1.4)
         magic_msg += f'Magic for F/P or I/L: {fpil_magic}\n'
 
-        # BW
         bw_magic = calc_magic(monster_hp=hp, modifier=modifier * 1.3)
         magic_msg += f'Magic for BW: {bw_magic}'
     else:
@@ -98,6 +95,7 @@ async def time(ctx: lightbulb.context.Context):
 @lightbulb.command('id', 'Displays your Discord ID')
 @lightbulb.implements(lightbulb.PrefixCommand)
 async def id_(ctx: lightbulb.context.Context):
+    """To use this command on another user, """
     member = ctx.options.member or ctx.author
     return await ctx.respond(f'{member}\'s Discord ID is **{member.id}**. Type `@discord` in game '
                             f'and enter this ID into the prompt to link your in-game account to your Discord account.')
@@ -135,25 +133,32 @@ async def ees_(ctx: lightbulb.context.Context):
         return await ctx.send(f'{ctx.author.mention}, stars must be a minimum of 0 and a maximum of 15.')
 
     message = await ctx.respond(f'Running simulation of EES from {start}* to {end}* {samples} times...')
-    result = await asyncio.get_running_loop().run_in_executor(None, simulate_ees, ees, protect_delta, samples)
+    result = await asyncio.get_running_loop().run_in_executor(None, sample, ees, protect_delta, samples)
     await message.delete()
 
-    ees_meso_cost = 175_000_000
-    sfprot_dp_cost = 2_500
-    sfprot_vp_cost = 5
-
-    def roundup(x):
-        return int(math.ceil(x / 10_000.0)) * 10_000
+    ees_meso_cost = plugin.bot.d.config['ees']['meso-cost']
+    sfprot_dp_cost = plugin.bot.d.config['ees']['sfprot-dp-cost']
+    sfprot_vp_cost = plugin.bot.d.config['ees']['sfprot-vp-cost']
 
     embed = hikari.Embed(title='EES Simulator', description=result['description'])
     embed.add_field(
         name='EES',
-        value=f'Average Used: {result["ees_average"]:,.2f}\nMinimum Used: {result["ees_min"]:,}\nMaximum Used: {result["ees_max"]:,}\n\nAverage Meso Used: {ees_meso_cost * result["ees_average"]:,.2f}\nMinimum Meso Used: {ees_meso_cost * result["ees_min"]:,}\nMaximum Meso Used: {ees_meso_cost * result["ees_max"]:,}'
+        value=f'Average Used: {result["ees_average"]:,.2f}\n'\
+        f'Minimum Used: {result["ees_min"]:,}\n'\
+        f'Maximum Used: {result["ees_max"]:,}\n\n'\
+        f'Average Meso Used: {ees_meso_cost * result["ees_average"]:,.2f}\n'\
+        f'Minimum Meso Used: {ees_meso_cost * result["ees_min"]:,}\n'\
+        f'Maximum Meso Used: {ees_meso_cost * result["ees_max"]:,}'
     )
 
     embed.add_field(
         name='Starforce Protection Scrolls',
-        value=f'Average Used: {result["sfprot_average"]:,.2f}\nMinimum Used: {result["sfprot_min"]:,}\nMaximum Used: {result["sfprot_max"]:,}\n\nAverage VP/Credits Used: {sfprot_vp_cost * result["sfprot_average"]:,.2f}/{roundup(sfprot_dp_cost * result["sfprot_average"]):,}\nMinimum VP/Credits Used: {sfprot_vp_cost * result["sfprot_min"]:,}/{roundup(sfprot_dp_cost * result["sfprot_min"]):,}\nMaximum VP/Credits Used: {sfprot_vp_cost * result["sfprot_max"]:,}/{roundup(sfprot_dp_cost * result["sfprot_max"]):,}'
+        value=f'Average Used: {result["sfprot_average"]:,.2f}\n'\
+            f'Minimum Used: {result["sfprot_min"]:,}\n'\
+            f'Maximum Used: {result["sfprot_max"]:,}\n\n'\
+            f'Average VP/Credits Used: {sfprot_vp_cost * result["sfprot_average"]:,.2f}/{round_to_nearest(10000, sfprot_dp_cost * result["sfprot_average"]):,}\n'\
+            f'Minimum VP/Credits Used: {sfprot_vp_cost * result["sfprot_min"]:,}/{round_to_nearest(10000, sfprot_dp_cost * result["sfprot_min"]):,}\n'\
+            f'Maximum VP/Credits Used: {sfprot_vp_cost * result["sfprot_max"]:,}/{round_to_nearest(10000, sfprot_dp_cost * result["sfprot_max"]):,}'
     )
 
     embed.set_author(name=f'{ctx.author}', icon=ctx.author.avatar_url)

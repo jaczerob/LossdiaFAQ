@@ -9,4 +9,8 @@ bot:
   extensions: ./extensions
 faq:
   database: sqlite:///lossdia.db
+ees:
+  meso-cost: 175000000
+  sfprot-dp-cost: 2500
+  sfprot-vp-cost: 5
   
