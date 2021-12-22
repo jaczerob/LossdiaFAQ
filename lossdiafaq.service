@@ -1,0 +1,13 @@
+[Unit]
+Description=LossdiaFAQ Discord Bot service
+After=multi-user.target
+
+[Service]
+WorkingDirectory=/home/ubuntu/LossdiaFAQ
+User=ubuntu
+Type=simple
+ExecStart=/usr/bin/python3.8 /home/ubuntu/LossdiaFAQ/__main__.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
