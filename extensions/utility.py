@@ -99,7 +99,6 @@ async def time(ctx: lightbulb.context.Context):
 @lightbulb.implements(lightbulb.PrefixCommand)
 async def id_(ctx: lightbulb.context.Context):
     member = ctx.options.member or ctx.author
-    id = member.id
     return await ctx.respond(f'{member}\'s Discord ID is **{member.id}**. Type `@discord` in game '
                             f'and enter this ID into the prompt to link your in-game account to your Discord account.')
 
@@ -110,14 +109,14 @@ async def id_(ctx: lightbulb.context.Context):
 async def online(ctx: lightbulb.context.Context):
     guild = ctx.get_guild()
     if not guild or guild.id != plugin.bot.d.config['bot']['guild']:
-        return await ctx.send('This command may only be used in the Lossdia Discord Server.')
+        return await ctx.respond('This command may only be used in the Lossdia Discord Server.')
 
     lossdia_bot = guild.get_member(plugin.bot.d.config['bot']['lossdia-bot'])
     if not lossdia_bot or not lossdia_bot.get_presence():
-        return await ctx.send('I cannot get the online count currently.')
+        return await ctx.respond('I cannot get the online count currently.')
 
     online_count = lossdia_bot.get_presence().activities[0].name.split(' ')[3]
-    return await ctx.send(f'Online Users: {online_count}')
+    return await ctx.respond(f'Online Users: {online_count}')
 
 
 @plugin.command()
