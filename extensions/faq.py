@@ -50,10 +50,25 @@ async def faq_handler(message: hikari.MessageCreateEvent):
 
 
 @plugin.command()
+@lightbulb.option('command', 'The command to invoke')
+@lightbulb.command('faq', 'Invokes a FAQ command', ephemeral=True)
+@lightbulb.implements(lightbulb.SlashCommand)
+async def faq(ctx: lightbulb.context.Context) -> None:
+    command = ctx.options.command
+    if not (resp := await plugin.bot.d.db.request(command)):
+        return
+
+    if isinstance(resp, str):
+        return await ctx.respond(resp)
+    elif isinstance(resp, list):
+        return await ctx.respond(f'Did you mean... {", ".join(resp)}')
+
+
+@plugin.command()
 @lightbulb.option('description', 'The description of the command', modifier=commands.OptionModifier.CONSUME_REST)
 @lightbulb.option('command', 'The command to add')
 @lightbulb.command('add', 'Adds a FAQ command')
-@lightbulb.implements(commands.PrefixCommand)
+@lightbulb.implements(lightbulb.PrefixCommand)
 async def add(ctx: lightbulb.context.Context) -> None:
     command, description = ctx.options.command, ctx.options.description
     await plugin.bot.d.db.create(command, description)
@@ -64,7 +79,7 @@ async def add(ctx: lightbulb.context.Context) -> None:
 @lightbulb.option('description', 'The description of the command', modifier=commands.OptionModifier.CONSUME_REST)
 @lightbulb.option('command', 'The command to update')
 @lightbulb.command('update', 'Updates a FAQ command')
-@lightbulb.implements(commands.PrefixCommand)
+@lightbulb.implements(lightbulb.PrefixCommand)
 async def update(ctx: lightbulb.context.Context) -> None:
     command, description = ctx.options.command, ctx.options.description
     await plugin.bot.d.db.update(command, description)
@@ -74,7 +89,7 @@ async def update(ctx: lightbulb.context.Context) -> None:
 @plugin.command()
 @lightbulb.option('command', 'The command to add')
 @lightbulb.command('delete', 'Deletes a FAQ command')
-@lightbulb.implements(commands.PrefixCommand)
+@lightbulb.implements(lightbulb.PrefixCommand)
 async def add(ctx: lightbulb.context.Context) -> None:
     command = ctx.options.command
     await plugin.bot.d.db.delete(command)

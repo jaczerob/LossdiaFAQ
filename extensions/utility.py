@@ -5,7 +5,6 @@ from datetime import datetime, timedelta
 
 import hikari
 import lightbulb
-from lightbulb import commands
 
 from extensions.utils import sample, calc_magic, round_to_nearest
 
@@ -17,8 +16,8 @@ plugin = lightbulb.Plugin('Utilities', 'Utility commands and handlers')
 @lightbulb.option('args', 'Optional arguments for spell modifiers', default=None)
 @lightbulb.option('spell_attack', 'Your spell\'s magic damage', type=int)
 @lightbulb.option('hp', 'The monster\'s HP', type=int)
-@lightbulb.command('magic', 'Shows how much magic is needed to one shot a monster with given HP')
-@lightbulb.implements(commands.PrefixCommand)
+@lightbulb.command('magic', 'Shows how much magic is needed to one shot a monster with given HP', ephemeral=True)
+@lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def magic(ctx: lightbulb.context.Context):
     hp, spell_attack, args = ctx.options.hp, ctx.options.spell_attack, ctx.options.args
     modifiers_msg = f'Spell Attack: {spell_attack}\n'
@@ -74,10 +73,9 @@ async def on_error(event: lightbulb.CommandErrorEvent):
             f'Example Usage: $magic 43376970 570 -al'
         )
 
-
 @plugin.command()
-@lightbulb.command('time', 'Displays the current server time')
-@lightbulb.implements(lightbulb.PrefixCommand)
+@lightbulb.command('time', 'Displays the current server time', ephemeral=True)
+@lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def time(ctx: lightbulb.context.Context):
     time = datetime.utcnow().strftime('%d %b, %Y %H:%M:%S')
 
@@ -90,20 +88,21 @@ async def time(ctx: lightbulb.context.Context):
     return await ctx.respond(f'The current server time is: {time}\nTime until reset: {time_until_reset}')
 
 
+"""
 @plugin.command()
 @lightbulb.option('member', 'Optional member to grab ID from', type=lightbulb.MemberConverter, default=None)
-@lightbulb.command('id', 'Displays your Discord ID')
-@lightbulb.implements(lightbulb.PrefixCommand)
-async def id_(ctx: lightbulb.context.Context):
-    """To use this command on another user, """
+@lightbulb.command('id', 'Displays your Discord ID', ephemeral=True)
+@lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
+async def id_command(ctx: lightbulb.context.Context):
     member = ctx.options.member or ctx.author
     return await ctx.respond(f'{member}\'s Discord ID is **{member.id}**. Type `@discord` in game '
                             f'and enter this ID into the prompt to link your in-game account to your Discord account.')
+"""
 
 
 @plugin.command()
-@lightbulb.command('online', 'Displays the game\'s current online count')
-@lightbulb.implements(lightbulb.PrefixCommand)
+@lightbulb.command('online', 'Displays the game\'s current online count', ephemeral=True)
+@lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def online(ctx: lightbulb.context.Context):
     guild = ctx.get_guild()
     if not guild or guild.id != plugin.bot.d.config['bot']['guild']:
@@ -121,8 +120,8 @@ async def online(ctx: lightbulb.context.Context):
 @lightbulb.option('samples', 'How many trials to do (default = 10,000)', type=int, default=10_000)
 @lightbulb.option('protect_delta', 'The amount of stars before the checkpoints to start using star protection scrolls', type=int)
 @lightbulb.option('ees', 'The start-end stars')
-@lightbulb.command('ees', 'Simulates EES from start to end')
-@lightbulb.implements(lightbulb.PrefixCommand)
+@lightbulb.command('ees', 'Simulates EES from start to end', ephemeral=True)
+@lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def ees_(ctx: lightbulb.context.Context):
     ees, protect_delta, samples = ctx.options.ees, ctx.options.protect_delta, ctx.options.samples
     start, end = map(int, ees.split('-'))
@@ -163,6 +162,7 @@ async def ees_(ctx: lightbulb.context.Context):
 
     embed.set_author(name=f'{ctx.author}', icon=ctx.author.avatar_url)
     return await ctx.respond(embed=embed)
+    
 
 
 def load(bot):
