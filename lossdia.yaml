@@ -2,10 +2,11 @@ bot:
   secrets:
     token: NjY0NTQxOTQ4OTQxNjk3MDQ0.XhYk6w.gj41Ke2KQR_tTUQpG2rESpPbhKo
   prefix: $
-  guild: 714229842052251699 #610212514856435719
-  channel: 714229842052251703 #921214299878326313
+  guild: 920990945271488603
+  channel: 923221574016958474
   lossdia-bot: 614221348780113920
   logging: 917903722871398421
   extensions: ./extensions
 faq:
   database: sqlite:///lossdia.db
+  
