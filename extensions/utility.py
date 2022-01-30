@@ -129,7 +129,7 @@ async def ees_(ctx: lightbulb.context.Context):
     if samples > 10_000:
         return await ctx.respond(f'{ctx.author.mention}, please keep samples to a maximum of 10,000.')
     elif start < 0 or end > 15:
-        return await ctx.send(f'{ctx.author.mention}, stars must be a minimum of 0 and a maximum of 15.')
+        return await ctx.respond(f'{ctx.author.mention}, stars must be a minimum of 0 and a maximum of 15.')
 
     message = await ctx.respond(f'Running simulation of EES from {start}* to {end}* {samples} times...')
     result = await asyncio.get_running_loop().run_in_executor(None, sample, ees, protect_delta, samples)
