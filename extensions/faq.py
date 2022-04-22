@@ -46,9 +46,8 @@ async def faq_handler(message: hikari.MessageCreateEvent):
     if not check(bot_channel, message_channel, member):
         event = await message_channel.send(f'Please use the bot channel, {member.mention}.')
         await asyncio.sleep(5)
-        return await event.message.delete()
+        return await event.delete()
 
-        
     if not (resp := await plugin.bot.d.db.request(command)):
         return
 
