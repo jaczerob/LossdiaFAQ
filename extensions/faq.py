@@ -59,11 +59,16 @@ async def faq_handler(message: hikari.MessageCreateEvent):
 
 
 @plugin.command()
-@lightbulb.option('command', 'The command to invoke')
+@lightbulb.option('command', 'The command to invoke', default=None)
 @lightbulb.command('faq', 'Invokes a FAQ command', ephemeral=True)
-@lightbulb.implements(lightbulb.SlashCommand)
+@lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def faq(ctx: lightbulb.context.Context) -> None:
     command = ctx.options.command
+    if command is None:
+        all_commands = plugin.bot.d.db.request_all()
+        fmt = ' | '.join(all_commands)[:-3]
+        return await ctx.respond(f'Here are all our FAQ commands\n```\n{fmt}\n```')
+
     if not (resp := await plugin.bot.d.db.request(command)):
         return
 

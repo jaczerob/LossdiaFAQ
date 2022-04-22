@@ -12,6 +12,11 @@ class FAQDatabase:
     def __init__(self, file_path):
         self._database = Database(file_path)
 
+    async def request_all(self):
+        query = 'SELECT command FROM commands;'
+        all_commands = [res['command'] for res in await self._database.fetch_all(query)]
+        return all_commands
+
     async def request(self, command: str):
         if resp := await self._get_description(command):
             return resp
@@ -83,5 +88,5 @@ class FAQDatabase:
         query = 'SELECT command FROM commands;'
         all_commands = await self._database.fetch_all(query)
 
-        closest_matches = [command for command in all_commands if _is_close_match(command, target)]
+        closest_matches = [command['command'] for command in all_commands if _is_close_match(command['command'], target)]
         return closest_matches
