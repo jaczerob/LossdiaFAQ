@@ -1,5 +1,4 @@
 import asyncio
-import math
 import re
 from datetime import datetime, timedelta
 
@@ -101,7 +100,7 @@ async def id_command(ctx: lightbulb.context.Context):
 
 
 @plugin.command()
-@lightbulb.command('online', 'Displays the game\'s current online count', ephemeral=True)
+@lightbulb.command('online', 'Displays the game\'s current online count')
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def online(ctx: lightbulb.context.Context):
     guild = ctx.get_guild()

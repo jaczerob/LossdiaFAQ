@@ -3,6 +3,7 @@ import traceback
 
 import hikari
 import lightbulb
+import lightbulb.utils
 import yaml
 
 from database import FAQDatabase
@@ -49,21 +50,22 @@ async def on_error(event: lightbulb.CommandErrorEvent) -> None:
 
 @bot.check()
 async def bot_channel_only(ctx: lightbulb.context.Context):
-    if ctx.author == bot.application.owner:
+    if ctx.author.id == 476226626464645135:
         return True
 
-    if not ctx.channel_id: # no one can use in DMs
-        return False
-
     message_channel: hikari.GuildTextChannel = await bot.rest.fetch_channel(ctx.channel_id)
-    guild: hikari.Guild = await message_channel.fetch_guild()
-    member = guild.get_member(ctx.author.id)
-
-    if not guild.id == bot.d.config['bot']['guild']:
+    if not isinstance(message_channel, hikari.GuildTextChannel):
         return False
 
-    # moderators can use anywhere, else only use in the bot channel
-    return any((member.get_top_role().permissions.MANAGE_MESSAGES, message_channel.id == bot.d.config['bot']['channel']))
+    guild: hikari.Guild = await message_channel.fetch_guild()
+    if not guild.id == bot.d.config['bot']['guild']:
+        return True
+
+    if message_channel.id == bot.d.config['bot']['channel']:
+        return True
+
+    member = guild.get_member(ctx.author.id)
+    return member.get_top_role().permissions.any(hikari.Permissions.MANAGE_MESSAGES)
 
 
 async def cleanup():

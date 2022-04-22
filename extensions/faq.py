@@ -10,7 +10,16 @@ plugin.add_checks(lightbulb.checks.has_role_permissions(hikari.Permissions.MANAG
 
 
 def check(bot_channel: hikari.GuildTextChannel, message_channel: hikari.GuildTextChannel, member: hikari.Member):
-   return True if member.get_top_role().permissions.MANAGE_MESSAGES or bot_channel.id == message_channel.id or member.user == plugin.bot.application.owner else False
+    if member.get_top_role().permissions.MANAGE_MESSAGES:
+        return True
+
+    if bot_channel.id == message_channel.id:
+        return True
+
+    if member.user == plugin.bot.application.owner:
+        return True
+
+    return False
 
 
 @plugin.listener(hikari.MessageCreateEvent)
