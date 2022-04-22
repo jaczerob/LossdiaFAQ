@@ -24,6 +24,12 @@ def check(bot_channel: hikari.GuildTextChannel, message_channel: hikari.GuildTex
 
 @plugin.listener(hikari.MessageCreateEvent)
 async def faq_handler(message: hikari.MessageCreateEvent):
+    prefix = plugin.bot.d.config['bot']['prefix']
+    content = message.content
+    command = content[len(prefix):].split(' ')[0]
+    if not content.startswith(prefix) or plugin.bot.get_prefix_command(command):
+        return
+
     if message.is_bot or not plugin.bot.d.db.is_connected() or not message.channel_id:
         return
 
@@ -42,12 +48,6 @@ async def faq_handler(message: hikari.MessageCreateEvent):
         await asyncio.sleep(5)
         return await event.message.delete()
 
-    content = message.content
-    prefix = plugin.bot.d.config['bot']['prefix']
-    command = content[len(prefix):].split(' ')[0]
-
-    if not content.startswith(prefix) or plugin.bot.get_prefix_command(command):
-        return
         
     if not (resp := await plugin.bot.d.db.request(command)):
         return
