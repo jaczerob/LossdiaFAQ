@@ -116,8 +116,7 @@ async def update(ctx: lightbulb.Context) -> None:
 @lightbulb.option('command', 'The command to add')
 @lightbulb.command('delete', 'Deletes a FAQ command')
 @lightbulb.implements(lightbulb.PrefixCommand)
-async def add(ctx: lightbulb.Context) -> None:
-
+async def delete(ctx: lightbulb.Context) -> None:
     command = ctx.options.command
     await plugin.bot.d.db.delete(command)
     return await ctx.respond(f'{command} deleted.')
