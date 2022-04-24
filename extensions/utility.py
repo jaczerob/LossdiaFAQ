@@ -20,7 +20,8 @@ plugin = lightbulb.Plugin('Utilities', 'Utility commands and handlers')
 async def magic(ctx: lightbulb.Context):
     """
     flags include (not in any order):
-    -ls: loveless/elemental staff
+    -l: loveless staff
+    -s: elemental staff
     -e: elemental advantage  
     -d: elemental disadvantage
     -a: elemental amp
@@ -69,18 +70,16 @@ async def magic(ctx: lightbulb.Context):
 
 @magic.set_error_handler()
 async def on_error(event: lightbulb.CommandErrorEvent):
-    error = event.exception
-    if error in (lightbulb.errors.NotEnoughArguments, lightbulb.errors.ConverterFailure):
-        return await event.context.respond(
-            f'Usage: $magic <hp> <spell attack> <args>\n'
-            f'Args:\n'
-            f'\t-a: Elemental Amplification\n'
-            f'\t-l: Loveless Staff\n'
-            f'\t-s: Elemental Staff\n'
-            f'\t-e: Elemental Advantage\n'
-            f'\t-d: Elemental Disadvantage\n\n'
-            f'Example Usage: $magic 43376970 570 -al'
-        )
+    return await event.context.respond(
+        f'Usage: $magic <hp> <spell attack> <args>\n'
+        f'Args:\n'
+        f'\t-a: Elemental Amplification\n'
+        f'\t-l: Loveless Staff\n'
+        f'\t-s: Elemental Staff\n'
+        f'\t-e: Elemental Advantage\n'
+        f'\t-d: Elemental Disadvantage\n\n'
+        f'Example Usage: $magic 43376970 570 -al'
+    )
 
 @plugin.command()
 @lightbulb.command('time', 'Displays the current server time', ephemeral=True)
