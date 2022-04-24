@@ -12,30 +12,40 @@ plugin = lightbulb.Plugin('Utilities', 'Utility commands and handlers')
 
 
 @plugin.command()
-@lightbulb.option('args', 'Optional arguments for spell modifiers', default=None)
-@lightbulb.option('spell_attack', 'Your spell\'s magic damage', type=int)
-@lightbulb.option('hp', 'The monster\'s HP', type=int)
+@lightbulb.option('flags', 'Optional arguments for spell modifiers', default=None)
+@lightbulb.option('spell_attack', 'Your spell\'s magic damage', type=int, required=True)
+@lightbulb.option('hp', 'The monster\'s HP', type=int, required=True)
 @lightbulb.command('magic', 'Shows how much magic is needed to one shot a monster with given HP', ephemeral=True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def magic(ctx: lightbulb.Context):
-    hp, spell_attack, args = ctx.options.hp, ctx.options.spell_attack, ctx.options.args
+    """
+    flags include (not in any order):
+    -ls: loveless/elemental staff
+    -e: elemental advantage  
+    -d: elemental disadvantage
+    -a: elemental amp
+
+    ex: $magic x x -als means you are testing with elemental amp and loveless/elemental staff
+    """
+
+    hp, spell_attack, flags = ctx.options.hp, ctx.options.spell_attack, ctx.options.flags
     modifiers_msg = f'Spell Attack: {spell_attack}\n'
     modifier = 1.0 * spell_attack
 
-    if args:
-        if re.search(r'-[^ls]*[ls][^ls]*', args):  # loveless or elemental staff
+    if flags:
+        if re.search(r'-[^ls]*[ls][^ls]*', flags):  # loveless or elemental staff
             modifier *= 1.25
             modifiers_msg += f'Staff Multiplier: 1.25x\n'
-        if re.search(r'-[^e]*e[^e]*', args):  # elemental advantage
+        if re.search(r'-[^e]*e[^e]*', flags):  # elemental advantage
             modifier *= 1.50
             modifiers_msg += f'Elemental Advantage: 1.50x\n'
-        elif re.search(r'-[^d]*d[^d]*', args):  # elemental disadvantage
+        elif re.search(r'-[^d]*d[^d]*', flags):  # elemental disadvantage
             modifier *= 0.50
             modifiers_msg += f'Elemental Disadvantage: 0.50x\n'
 
     magic_msg = ''
 
-    if args and re.search(r'-[^a]*a[^a]*', args):  # elemental amp
+    if flags and re.search(r'-[^a]*a[^a]*', flags):  # elemental amp
         modifiers_msg += f'BW Elemental Amp: 1.30x\n'
         modifiers_msg += f'FP/IL Elemental Amp: 1.40x\n\n'
 
