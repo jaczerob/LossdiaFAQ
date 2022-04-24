@@ -76,7 +76,7 @@ async def faq(ctx: lightbulb.Context) -> None:
 async def send_faq(message_channel: hikari.GuildTextChannel, command: Optional[str]):
     if command is None:
         all_commands = await plugin.bot.d.db.request_all()
-        fmt = ' | '.join(all_commands)[:-3]
+        fmt = ' | '.join(all_commands)
         return await message_channel.send(f'Here are all our FAQ commands\n```\n{fmt}\n```')
 
     if not (resp := await plugin.bot.d.db.request(command)):
