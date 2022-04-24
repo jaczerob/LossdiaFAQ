@@ -5,8 +5,19 @@ import lightbulb
 from lightbulb import commands
 
 
+@lightbulb.Check
+def faq_check(ctx: lightbulb.Context):
+    if ctx.user.id == 476226626464645135:
+        return True
+
+    if ctx.member is None:
+        return False
+
+    return ctx.member.get_top_role().permissions.any(hikari.Permissions.MANAGE_MESSAGES)
+
+
 plugin = lightbulb.Plugin('FAQ', 'FAQ commands and handlers')
-plugin.add_checks(lightbulb.checks.has_role_permissions(hikari.Permissions.MANAGE_MESSAGES))
+plugin.add_checks(faq_check)
 
 
 def check(bot_channel: hikari.GuildTextChannel, message_channel: hikari.GuildTextChannel, member: hikari.Member):
@@ -39,14 +50,12 @@ async def faq_handler(message: hikari.MessageCreateEvent):
     message_channel: hikari.GuildTextChannel = await plugin.bot.rest.fetch_channel(message.channel_id)
     guild: hikari.Guild = await message_channel.fetch_guild()
 
-    if not guild.id == guild_id:
-        return
-        
-    member = guild.get_member(message.author_id)
-    if not check(bot_channel, message_channel, member):
-        event = await message_channel.send(f'Please use the bot channel, {member.mention}.')
-        await asyncio.sleep(5)
-        return await event.delete()
+    if guild.id == guild_id:
+        member = guild.get_member(message.author_id)
+        if not check(bot_channel, message_channel, member):
+            event = await message_channel.send(f'Please use the bot channel, {member.mention}.')
+            await asyncio.sleep(5)
+            return await event.delete()
 
     if not (resp := await plugin.bot.d.db.request(command)):
         return
