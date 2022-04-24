@@ -49,7 +49,7 @@ async def on_error(event: lightbulb.CommandErrorEvent) -> None:
 
 
 @bot.check()
-async def bot_channel_only(ctx: lightbulb.context.Context):
+async def bot_channel_only(ctx: lightbulb.Context):
     if ctx.author.id == 476226626464645135:
         return True
 

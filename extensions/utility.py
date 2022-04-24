@@ -17,7 +17,7 @@ plugin = lightbulb.Plugin('Utilities', 'Utility commands and handlers')
 @lightbulb.option('hp', 'The monster\'s HP', type=int)
 @lightbulb.command('magic', 'Shows how much magic is needed to one shot a monster with given HP', ephemeral=True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
-async def magic(ctx: lightbulb.context.Context):
+async def magic(ctx: lightbulb.Context):
     hp, spell_attack, args = ctx.options.hp, ctx.options.spell_attack, ctx.options.args
     modifiers_msg = f'Spell Attack: {spell_attack}\n'
     modifier = 1.0 * spell_attack
@@ -75,7 +75,7 @@ async def on_error(event: lightbulb.CommandErrorEvent):
 @plugin.command()
 @lightbulb.command('time', 'Displays the current server time', ephemeral=True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
-async def time(ctx: lightbulb.context.Context):
+async def time(ctx: lightbulb.Context):
     time = datetime.utcnow().strftime('%d %b, %Y %H:%M:%S')
 
     tomorrow = datetime.utcnow() + timedelta(1)
@@ -92,7 +92,7 @@ async def time(ctx: lightbulb.context.Context):
 @lightbulb.option('member', 'Optional member to grab ID from', type=lightbulb.MemberConverter, default=None)
 @lightbulb.command('id', 'Displays your Discord ID', ephemeral=True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
-async def id_command(ctx: lightbulb.context.Context):
+async def id_command(ctx: lightbulb.Context):
     member = ctx.options.member or ctx.author
     return await ctx.respond(f'{member}\'s Discord ID is **{member.id}**. Type `@discord` in game '
                             f'and enter this ID into the prompt to link your in-game account to your Discord account.')
@@ -102,7 +102,7 @@ async def id_command(ctx: lightbulb.context.Context):
 @plugin.command()
 @lightbulb.command('online', 'Displays the game\'s current online count')
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
-async def online(ctx: lightbulb.context.Context):
+async def online(ctx: lightbulb.Context):
     guild = ctx.get_guild()
     if not guild or guild.id != plugin.bot.d.config['bot']['guild']:
         return await ctx.respond('This command may only be used in the Lossdia Discord Server.')
@@ -121,7 +121,7 @@ async def online(ctx: lightbulb.context.Context):
 @lightbulb.option('ees', 'The start-end stars')
 @lightbulb.command('ees', 'Simulates EES from start to end', ephemeral=True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
-async def ees_(ctx: lightbulb.context.Context):
+async def ees_(ctx: lightbulb.Context):
     ees, protect_delta, samples = ctx.options.ees, ctx.options.protect_delta, ctx.options.samples
     start, end = map(int, ees.split('-'))
 

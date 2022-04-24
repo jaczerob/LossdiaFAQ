@@ -1,4 +1,6 @@
 import asyncio
+from email import message
+from typing import Optional
 
 import hikari
 import lightbulb
@@ -57,33 +59,35 @@ async def faq_handler(message: hikari.MessageCreateEvent):
             await asyncio.sleep(5)
             return await event.delete()
 
-    if not (resp := await plugin.bot.d.db.request(command)):
-        return
 
-    if isinstance(resp, str):
-        return await message_channel.send(resp)
-    elif isinstance(resp, list):
-        return await message_channel.send(f'Did you mean... {", ".join(resp)}')
+    await send_faq(message_channel, command)
 
 
 @plugin.command()
 @lightbulb.option('command', 'The command to invoke', default=None)
-@lightbulb.command('faq', 'Invokes a FAQ command', ephemeral=True)
-@lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
-async def faq(ctx: lightbulb.context.Context) -> None:
-    command = ctx.options.command
+@lightbulb.command('faq', 'Invokes a FAQ command')
+@lightbulb.implements(lightbulb.PrefixCommand)
+async def faq(ctx: lightbulb.Context) -> None:
+    if channel := ctx.get_channel():
+        command = ctx.options.command
+        await send_faq(channel, command)
+
+
+async def send_faq(message_channel: hikari.GuildTextChannel, command: Optional[str]):
     if command is None:
-        all_commands = plugin.bot.d.db.request_all()
+        all_commands = await plugin.bot.d.db.request_all()
         fmt = ' | '.join(all_commands)[:-3]
-        return await ctx.respond(f'Here are all our FAQ commands\n```\n{fmt}\n```')
+        return await message_channel.send(f'Here are all our FAQ commands\n```\n{fmt}\n```')
 
     if not (resp := await plugin.bot.d.db.request(command)):
         return
 
-    if isinstance(resp, str):
-        return await ctx.respond(resp)
-    elif isinstance(resp, list):
-        return await ctx.respond(f'Did you mean... {", ".join(resp)}')
+    if not isinstance(resp, str):
+        return
+
+    embed = hikari.Embed(title=command, description=resp, color=hikari.Color.from_hex_code('#bbbefe'))
+    embed.set_footer('Ask (DO NOT PING) olivia rodrigo or a staff member to $add or $update a command if you want!')
+    return await message_channel.send(embed=embed)
 
 
 @plugin.command()
@@ -91,7 +95,7 @@ async def faq(ctx: lightbulb.context.Context) -> None:
 @lightbulb.option('command', 'The command to add')
 @lightbulb.command('add', 'Adds a FAQ command')
 @lightbulb.implements(lightbulb.PrefixCommand)
-async def add(ctx: lightbulb.context.Context) -> None:
+async def add(ctx: lightbulb.Context) -> None:
     command, description = ctx.options.command, ctx.options.description
     await plugin.bot.d.db.create(command, description)
     return await ctx.respond(f'{command} added.')
@@ -102,7 +106,7 @@ async def add(ctx: lightbulb.context.Context) -> None:
 @lightbulb.option('command', 'The command to update')
 @lightbulb.command('update', 'Updates a FAQ command')
 @lightbulb.implements(lightbulb.PrefixCommand)
-async def update(ctx: lightbulb.context.Context) -> None:
+async def update(ctx: lightbulb.Context) -> None:
     command, description = ctx.options.command, ctx.options.description
     await plugin.bot.d.db.update(command, description)
     return await ctx.respond(f'{command} updated.')
@@ -112,7 +116,8 @@ async def update(ctx: lightbulb.context.Context) -> None:
 @lightbulb.option('command', 'The command to add')
 @lightbulb.command('delete', 'Deletes a FAQ command')
 @lightbulb.implements(lightbulb.PrefixCommand)
-async def add(ctx: lightbulb.context.Context) -> None:
+async def add(ctx: lightbulb.Context) -> None:
+
     command = ctx.options.command
     await plugin.bot.d.db.delete(command)
     return await ctx.respond(f'{command} deleted.')
