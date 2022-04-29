@@ -90,11 +90,11 @@ async def send_faq(message_channel: hikari.GuildTextChannel, command: Optional[s
 
 
 @plugin.command()
+@lightbulb.add_checks(faq_check)
 @lightbulb.option('description', 'The description of the command', modifier=commands.OptionModifier.CONSUME_REST)
 @lightbulb.option('command', 'The command to add')
 @lightbulb.command('add', 'Adds a FAQ command')
 @lightbulb.implements(lightbulb.PrefixCommand)
-@lightbulb.add_checks(faq_check)
 async def add(ctx: lightbulb.Context) -> None:
     command, description = ctx.options.command, ctx.options.description
     await plugin.bot.d.db.create(command, description)
@@ -102,11 +102,11 @@ async def add(ctx: lightbulb.Context) -> None:
 
 
 @plugin.command()
+@lightbulb.add_checks(faq_check)
 @lightbulb.option('description', 'The description of the command', modifier=commands.OptionModifier.CONSUME_REST)
 @lightbulb.option('command', 'The command to update')
 @lightbulb.command('update', 'Updates a FAQ command')
 @lightbulb.implements(lightbulb.PrefixCommand)
-@lightbulb.add_checks(faq_check)
 async def update(ctx: lightbulb.Context) -> None:
     command, description = ctx.options.command, ctx.options.description
     await plugin.bot.d.db.update(command, description)
@@ -114,10 +114,10 @@ async def update(ctx: lightbulb.Context) -> None:
 
 
 @plugin.command()
+@lightbulb.add_checks(faq_check)
 @lightbulb.option('command', 'The command to add')
 @lightbulb.command('delete', 'Deletes a FAQ command')
 @lightbulb.implements(lightbulb.PrefixCommand)
-@lightbulb.add_checks(faq_check)
 async def delete(ctx: lightbulb.Context) -> None:
     command = ctx.options.command
     await plugin.bot.d.db.delete(command)
