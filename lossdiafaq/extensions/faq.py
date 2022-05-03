@@ -15,6 +15,8 @@ class FAQCog(commands.Cog):
         description="displays all FAQ commands",
     )
     async def faq_group(self, ctx: commands.Context):
+        """displays all FAQ commands"""
+        
         if ctx.interaction:
             await ctx.defer()
 
@@ -47,16 +49,13 @@ class FAQCog(commands.Cog):
         if not message.content.startswith(self.bot.command_prefix):
             return
 
-        command = message.content[len(self.bot.command_prefix):]
-        if self.bot.get_command(command):
+        raw_command = message.content[len(self.bot.command_prefix):].split(' ')
+        if self.bot.get_command(command) or not (command := await self.bot.db.get(raw_command[0].lower())):
             return
 
         if message.channel.id != static.LOSSDIA_BOT_CHANNEL_ID and message.guild.id == static.LOSSDIA_GUILD_ID:
             if not self.bot.is_owner(message.author) or not message.channel.permissions_for(message.author).manage_messages:
                 return await message.channel.send(f"Please use the bot channel, {message.author.mention}.", delete_after=5.0)
-
-        if not (command := await self.bot.db.get(command)):
-            return
 
         return await message.channel.send(embed=NormalEmbed(title=command.name, description=command.description))
 
