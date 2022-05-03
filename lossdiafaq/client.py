@@ -62,12 +62,12 @@ class LossdiaFAQ(commands.Bot):
     async def on_error(self, event_method: str, /, *args: Any, **kwargs: Any) -> None:
         if len(args) > 0 and isinstance(args[0], (commands.CommandInvokeError, commands.HybridCommandError, )):
             logger.opt(exception=args[0]).error("error during runtime of {}", event_method)
-            tb = ''.join(traceback.format_exception(args[0]))
+            tb = "".join(traceback.format_exception(args[0]))
         else:
             exc_info = sys.exc_info()
             logger.opt(exception=exc_info).error("error during runtime of {}", event_method)
             
-            tb = ''.join(traceback.format_exception(exc_info[0], value=exc_info[1], tb=exc_info[2]))
+            tb = "".join(traceback.format_exception(exc_info[0], value=exc_info[1], tb=exc_info[2]))
 
         _, tb = format_traceback(tb)
         

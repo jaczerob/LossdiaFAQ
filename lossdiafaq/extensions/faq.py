@@ -1,3 +1,5 @@
+import re
+
 from discord.ext import commands
 import discord
 
@@ -9,6 +11,7 @@ from lossdiafaq.services.discord.embed import NormalEmbed
 class FAQCog(commands.Cog):
     def __init__(self, bot: LossdiaFAQ) -> None:
         self.bot = bot
+        self.image_url_regex = re.compile(r'^https?:\/\/(?:[a-z0-9\-]+\.)+[a-z]{2,6}(?:\/[^\/#?]+)+\.(?:jpg|gif|png)$')
 
     async def cog_check(self, ctx: commands.Context) -> bool:
         if await self.bot.is_owner(ctx.author):
@@ -73,7 +76,13 @@ class FAQCog(commands.Cog):
             if not self.bot.is_owner(message.author) or not message.channel.permissions_for(message.author).manage_messages:
                 return await message.channel.send(f"Please use the bot channel, {message.author.mention}.", delete_after=5.0)
 
-        return await message.channel.send(embed=NormalEmbed(title=command.name, description=command.description))
+        embed = NormalEmbed(title=command.name, description=command.description)
+
+        if match := self.image_url_regex.match(command.description):
+            image_url = match.group(0)
+            embed.set_image(url=image_url)
+
+        return await message.channel.send(embed=embed)
 
 
 async def setup(bot: LossdiaFAQ) -> None:
