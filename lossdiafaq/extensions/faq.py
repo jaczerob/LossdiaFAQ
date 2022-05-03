@@ -50,7 +50,11 @@ class FAQCog(commands.Cog):
             return
 
         raw_command = message.content[len(self.bot.command_prefix):].split(' ')
-        if self.bot.get_command(command) or not (command := await self.bot.db.get(raw_command[0].lower())):
+        command = raw_command[0].lower()
+        if self.bot.get_command(command):
+            return
+        
+        if not (command := await self.bot.db.get(command)):
             return
 
         if message.channel.id != static.LOSSDIA_BOT_CHANNEL_ID and message.guild.id == static.LOSSDIA_GUILD_ID:
