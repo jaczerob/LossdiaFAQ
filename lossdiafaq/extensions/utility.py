@@ -7,6 +7,7 @@ import discord
 from lossdiafaq import static
 from lossdiafaq.client import LossdiaFAQ
 from lossdiafaq.services.calculator.ees import EESArgumentError, EESCalculator
+from lossdiafaq.services.calculator.flame import FlameCalculator
 from lossdiafaq.services.calculator.magic import FlagError, MagicCalculator
 from lossdiafaq.services.discord import NormalEmbed
 from lossdiafaq.services.discord.embed import ErrorEmbed
@@ -141,6 +142,41 @@ class Utility(commands.Cog):
 
         online_count = lossdia_bot.activities[0].name.split(' ')[3]
         return await ctx.send(f'Online Users: {online_count}')
+
+    @commands.hybrid_command(
+        name="flame",
+        description="shows the flame range for a certain level of gear",
+        usage="<item level>",
+        aliases=["flames",]
+    )
+    async def _flame(self, ctx: commands.Context, level: int):
+        """shows the flame range for a certain level of gear"""
+
+        flames = FlameCalculator(level)
+        flames.calculate()
+
+        flames_embed = NormalEmbed(
+            title="Flames Calculator",
+            description="",
+            author=ctx.author,
+        )
+
+        eflame_field = {
+            "name": "Eternal Flame Stat Range",
+            "value": "Overall: {} - {}\nNot Overall: {} - {}".format(flames.overall_eflame_min_stats, flames.overall_eflame_max_stats, flames.item_eflame_min_stats, flames.item_eflame_max_stats),
+            "inline": False,
+        }
+
+        pflame_field = {
+            "name": "Powerful Flame Stat Range",
+            "value": "Overall: {} - {}\nNot Overall: {} - {}".format(flames.overall_pflame_min_stats, flames.overall_pflame_max_stats, flames.item_pflame_min_stats, flames.item_pflame_max_stats),
+            "inline": False,
+        }
+
+        flames_embed.add_field(**eflame_field)
+        flames_embed.add_field(**pflame_field)
+        return await ctx.send(embed=flames_embed)
+
 
     @commands.hybrid_command(
         name="ees",

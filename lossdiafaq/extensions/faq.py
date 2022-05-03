@@ -1,10 +1,10 @@
 from discord.ext import commands
 import discord
 
+from lossdiafaq import static
 from lossdiafaq.client import LossdiaFAQ
 from lossdiafaq.services.database.database import Command
 from lossdiafaq.services.discord.embed import NormalEmbed
-import lossdiafaq.static as static
 
 class FAQCog(commands.Cog):
     def __init__(self, bot: LossdiaFAQ) -> None:
