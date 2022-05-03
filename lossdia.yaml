@@ -1,16 +1,1 @@
-bot:
-  secrets:
-    token: NjY0NTQxOTQ4OTQxNjk3MDQ0.XhYk6w.gj41Ke2KQR_tTUQpG2rESpPbhKo
-  prefix: $
-  guild: 920990945271488603
-  channel: 923221574016958474
-  lossdia-bot: 614221348780113920
-  logging: 917903722871398421
-  extensions: ./extensions
-faq:
-  database: sqlite:///lossdia.db
-ees:
-  meso-cost: 175000000
-  sfprot-dp-cost: 2500
-  sfprot-vp-cost: 5
-  
+token: ODEyOTA3NDQxODEyNzk5NTM4.YDHlDQ.ghhoUk5kvAn4z0R5qGnL4FoAqms

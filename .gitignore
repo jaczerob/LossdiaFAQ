@@ -13,3 +13,7 @@ venv.bak/
 
 .DS_Store
 *.service
+
+*.spec
+build/
+dist/
