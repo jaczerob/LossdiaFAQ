@@ -138,7 +138,7 @@ class Utility(commands.Cog):
         reset_delta = (midnight - datetime.utcnow())
         time_until_reset = str(reset_delta).split('.')[0]
         
-        embed = NormalEmbed(title="Server Time", description=f"The current server time is: {time}\nTime until reset: {time_until_reset}", author=ctx.author)
+        embed = NormalEmbed(title="Server Time", description=f"The current server time is: {time} UTC\nTime until reset: {time_until_reset}", author=ctx.author)
         return await ctx.send(embed=embed)
 
     @commands.hybrid_command(
