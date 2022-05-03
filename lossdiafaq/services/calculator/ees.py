@@ -15,7 +15,7 @@ class EESCalculator:
     def __init__(self, start: int, end: int, delta: int) -> None:
         self.start = start
         self.end = end
-        self.delta = end
+        self.delta = delta
 
         self.avg_attempts = 0
         self.avg_sfprots_used = 0
@@ -53,14 +53,14 @@ class EESCalculator:
         for _ in range(samples):
             attempts, sfprots_used = self._attempt_ees()
             meso_used = attempts * meso_cost
-            vp_used = attempts * vp_cost
-            dp_used = attempts * dp_cost
+            vp_used = sfprots_used * vp_cost
+            dp_used = sfprots_used * dp_cost
 
             self.avg_attempts += attempts / samples
             self.avg_sfprots_used += sfprots_used / samples
-            self.avg_meso_used += meso_cost * attempts / samples
-            self.avg_dp_used += dp_cost * sfprots_used / samples
-            self.avg_vp_used += vp_cost * sfprots_used / samples
+            self.avg_meso_used += meso_used / samples
+            self.avg_dp_used += dp_used / samples
+            self.avg_vp_used += vp_used / samples
 
             if attempts < self.min_attempts:
                 self.min_attempts = attempts
@@ -118,5 +118,5 @@ class EESCalculator:
             
             attempts += 1
 
-        return attempts, sfprot_used
+        return attempts, sfprots_used
     

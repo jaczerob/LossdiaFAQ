@@ -1,3 +1,4 @@
+from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta
 from typing import Optional
 
@@ -16,6 +17,7 @@ from lossdiafaq.services.discord.embed import ErrorEmbed
 class Utility(commands.Cog):
     def __init__(self, bot: LossdiaFAQ) -> None:
         self.bot = bot
+        self.ees_executor = ThreadPoolExecutor(max_workers=3)
 
     @commands.hybrid_command(
         name="magic",
@@ -197,19 +199,17 @@ class Utility(commands.Cog):
             await ctx.defer()
 
         ees = EESCalculator(start, end, protect_delta)
-
         message = await ctx.send(f'Running simulation of EES from {start}* to {end}* {static.LOSSDIA_EES_SAMPLES} times...')
         
         try:
-            await self.bot.loop.run_in_executor(None, ees.sample)
+            await self.bot.loop.run_in_executor(self.ees_executor, ees.sample)
+            await message.delete()
         except EESArgumentError as error:
             await message.delete()
             return await ctx.send(embed=ErrorEmbed(
                 title="EES Simulator Argument Error",
                 description=str(error),
             ))
-
-        await message.delete()
 
         ees_embed = discord.Embed(
             color=static.BOT_EMBED_COLOR_NORMAL,
