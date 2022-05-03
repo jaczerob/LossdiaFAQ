@@ -10,6 +10,18 @@ class FAQCog(commands.Cog):
     def __init__(self, bot: LossdiaFAQ) -> None:
         self.bot = bot
 
+    async def cog_check(self, ctx: commands.Context) -> bool:
+        if await self.bot.is_owner(ctx.author):
+            return True
+
+        if ctx.guild is None:
+            return False
+
+        if ctx.channel.id == static.LOSSDIA_BOT_CHANNEL_ID:
+            return True
+
+        return ctx.channel.permissions_for(ctx.author).manage_messages
+
     @commands.hybrid_command(
         name="faq",
         description="displays all FAQ commands",

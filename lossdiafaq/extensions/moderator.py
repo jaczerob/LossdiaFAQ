@@ -12,9 +12,6 @@ class ModeratorCog(commands.Cog):
         if await self.bot.is_owner(ctx.author):
             return True
 
-        if ctx.invoked_subcommand is None:
-            return True
-
         if ctx.guild is None:
             return False
 
