@@ -28,6 +28,7 @@ class FAQCog(commands.Cog):
     @commands.hybrid_command(
         name="faq",
         description="displays all FAQ commands",
+        aliases=["commands",],
     )
     async def faq_group(self, ctx: commands.Context):
         """displays all FAQ commands"""
@@ -76,7 +77,7 @@ class FAQCog(commands.Cog):
             if not await self.bot.is_owner(message.author) or not message.channel.permissions_for(message.author).manage_messages:
                 return await message.channel.send(f"Please use the bot channel, {message.author.mention}.", delete_after=5.0)
 
-        embed = NormalEmbed(title=command.name, description=command.description)
+        embed = NormalEmbed(title=command.name, description=command.description, author=message.author)
 
         if match := self.image_url_regex.match(command.description):
             image_url = match.group(0)
