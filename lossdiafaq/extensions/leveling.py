@@ -67,7 +67,7 @@ class Leveling(commands.Cog):
 		self.bot = bot
 
 	@commands.command(
-		name="leveling",
+		title="Leveling",
 		description="Displays stat gain boundaries and simulated averages for item leveling, based on input of stats at level 1 (flames/starforce excluded).",
 		usage="$leveling <is weapon? 1/0> <stat> <attack>",
 	)
@@ -85,6 +85,8 @@ class Leveling(commands.Cog):
 
 		cur_stat = main_stat
 		cur_att = attack
+
+		simulated = str()
 
 		for x in range(6):
 			cur_stat += lv7_simulation_stat[2][x][0]
