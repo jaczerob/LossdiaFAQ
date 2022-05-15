@@ -106,11 +106,4 @@ class MagicCalculator:
         root1 = (-1*b + math.sqrt(b*b-4.*a*c)) / (2 * a)
         root2 = (-1*b - math.sqrt(b*b-4.*a*c)) / (2 * a)
 
-        if root1 > 0 and root2 > 0:
-            magic = int(math.ceil(math.ceil(root1, root2)))
-        elif root1 > 0:
-            magic = int(math.ceil(root1))
-        else:
-            magic = int(math.ceil(root2))
-
-        return magic
+        return int(math.ceil(max(root1, root2)))
