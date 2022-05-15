@@ -92,7 +92,7 @@ class LossdiaFAQ(commands.Bot):
             embed.description = "You do not have permissions to use this command!"
             delete_after = 5.0
         elif isinstance(exception, commands.UserInputError):
-            embed.description = f"You has misused this command! Here is some help:\n{self.command_prefix}{ctx.command.name} {ctx.command.usage}"
+            embed.description = f"You have misused this command! Here is some help:\n{self.command_prefix}{ctx.command.name} {ctx.command.usage}"
         else:
             exc_type_name = type(exception).__name__
             embed.description = f"Unhandled exception {exc_type_name}"
