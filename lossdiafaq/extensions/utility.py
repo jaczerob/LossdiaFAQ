@@ -97,12 +97,6 @@ class Utility(commands.Cog):
         if magic.flags.has_staff:
             modifier_label_field["value"] += "Staff Multiplier\n"
             modifier_value_field["value"] += "{:.02f}\n".format(static.LOSSDIA_MAGIC_STAFF_MULTIPLIER)
-
-        """
-        if modifier_label_field["value"] != "" and modifier_value_field["value"] != "":
-            magic_embed.add_field(**modifier_label_field)
-            magic_embed.add_field(**modifier_value_field)
-        """
         
         class_field = {
             "name": "Class",
