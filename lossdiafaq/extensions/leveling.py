@@ -81,7 +81,7 @@ class Leveling(commands.Cog):
 		average_stat_lv7: int = get_average(is_weapon, main_stat, False, 7)
 		lv7_simulation_att = simulate_levels(is_weapon, attack, True, 7)
 		highest_possible_att_lv7: int = lv7_simulation_att[1]
-		average_att_lv7: int = get_average(is_weapon, attack, True, 5)
+		average_att_lv7: int = get_average(is_weapon, attack, True, 7)
 
 		cur_stat = main_stat
 		cur_att = attack
