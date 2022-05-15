@@ -69,7 +69,7 @@ class Leveling(commands.Cog):
 	@commands.command(
 		name="leveling",
 		description="Displays stat gain boundaries and simulated averages for item leveling, based on input of stats at level 1 (flames/starforce excluded).",
-		usage="$leveling <is weapon? 1/0> <stat> <attack>",
+		usage="<is weapon? 1/0> <stat> <attack>",
 	)
 	async def _level(self, ctx: commands.Context, is_weapon: bool, main_stat: int, attack: int):
 		highest_possible_stat_lv5: int = simulate_levels(is_weapon, main_stat, False, 5)[1]
