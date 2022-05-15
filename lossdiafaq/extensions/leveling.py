@@ -24,7 +24,7 @@ def rand_stat(base: int) -> int:
 # [1] = upper bound of stat gain for this
 def calc_stat(is_weapon: bool, base: int, is_attack: bool) -> list:
 	if base == 0:
-		return base
+		return [0, 0]
 
 	randomized_result: int = 0
 	max_result: int = int(1 + (base // (get_stat_modifier(is_attack) * (2.5 if is_weapon and not is_attack else 1.05))))
@@ -36,6 +36,7 @@ def calc_stat(is_weapon: bool, base: int, is_attack: bool) -> list:
 			break
 
 	return [ randomized_result, max_result ]
+
 
 # Returns array:
 # [0] = total stat gained until we reach level_until
