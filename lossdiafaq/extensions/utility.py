@@ -99,12 +99,12 @@ class Utility(commands.Cog):
         )
 
         if magic.flags.has_amp:
-            class_field["value"] = "BW\nI/L\nF/P"
-            magic_field["value"] = "{:,}\n{:,}\n{:,}\n".format(magic.bw_magic, magic.fpil_magic, magic.fpil_magic)
+            class_field.value = "BW\nI/L\nF/P"
+            magic_field.value = "{:,}\n{:,}\n{:,}\n".format(magic.bw_magic, magic.fpil_magic, magic.fpil_magic)
 
         if not magic.flags.has_amp:
-            class_field["value"] = "BS"
-            magic_field["value"] = "{:,}".format(magic.bs_magic)
+            class_field.value = "BS"
+            magic_field.value = "{:,}".format(magic.bs_magic)
 
         magic_embed.add_field(class_field)
         magic_embed.add_field(magic_field)
