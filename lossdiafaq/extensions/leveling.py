@@ -108,14 +108,14 @@ class Leveling(commands.Cog):
 			simulated += f"- Lv. {x + 2}: stat +{lv7_simulation_stat[2][x][0]} (max: {lv7_simulation_stat[2][x][1]}) (now: {cur_stat}), att +{lv7_simulation_att[2][x][0]} (max: {lv7_simulation_att[2][x][1]}) (now: {cur_att})\n"
 
 		await ctx.send(f"""{"Weapon" if is_weapon else "Armor"}: Stats at level 1 -> primary {main_stat}, attack {attack}.\n
-	Highest possible stats @ level 5 (stat: {highest_possible_stat_lv5}, att: {highest_possible_att_lv5})
-	Average @ level 5 (stat: {average_stat_lv5}, att: {average_att_lv5})
-	Highest possible stats @ level 7 (stat: {highest_possible_stat_lv7}, att: {highest_possible_att_lv7})
-	Average @ level 7 (stat: {average_stat_lv7}, att: {average_att_lv7})\n
-	Simulation:
-	```
-	{simulated.strip()}
-	```""")
+Highest possible stats @ level 5 (stat: {highest_possible_stat_lv5}, att: {highest_possible_att_lv5})
+Average @ level 5 (stat: {average_stat_lv5}, att: {average_att_lv5})
+Highest possible stats @ level 7 (stat: {highest_possible_stat_lv7}, att: {highest_possible_att_lv7})
+Average @ level 7 (stat: {average_stat_lv7}, att: {average_att_lv7})\n
+Simulation:
+```
+{simulated.strip()}
+```""")
 
 async def setup(bot) -> None:
 	await bot.add_cog(Leveling(bot))
