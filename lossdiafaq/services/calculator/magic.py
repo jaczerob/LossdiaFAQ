@@ -14,6 +14,7 @@ class FlagError(Exception):
 class Flags:
     def __init__(self, flags: Optional[str]) -> None:
         self.flags = flags
+        self.empty = True
         self.has_amp = False
         self.has_adv = False
         self.has_disadv = False
@@ -25,6 +26,11 @@ class Flags:
 
         if self.flags.startswith("-"):
             self.flags = self.flags[1:]
+
+        if ' ' in self.flags:
+            raise FlagError("Flags cannot contain spaces (ex. -as instead of -a -s)")
+
+        self.empty = False
 
         while len(self.flags) != 0:
             flag = self.flags[0]
