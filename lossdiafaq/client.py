@@ -29,7 +29,8 @@ def format_traceback(tb: str) -> tuple[str | None, str]:
 class LossdiaFAQ(commands.Bot):
     def __init__(self, prefix: str) -> None:
         help_command = commands.DefaultHelpCommand(command_attrs=dict(hidden=True))
-        super().__init__(prefix, help_command=help_command, intents=discord.Intents.all(), owner_id=static.BOT_OWNER_ID)
+        super().__init__(prefix, help_command=help_command, intents=discord.Intents.all(), owner_id=static.BOT_OWNER_ID, activity=discord.Game(f"{prefix}help"))
+        
         self.db = FAQDatabase(static.DATABASE_URL)
 
     async def setup_hook(self) -> None:
