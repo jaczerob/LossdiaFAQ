@@ -44,6 +44,9 @@ class AdminCog(commands.Cog, command_attrs=dict(hidden=True)):
         description="shows all loaded extensions",
     )
     async def extensions_group(self, ctx: commands.Context):
+        if ctx.invoked_subcommand:
+            return
+            
         extensions = ", ".join(self.bot.extensions.keys())
         text = f"The following extensions are loaded: {extensions}"
         return await ctx.send(text)
@@ -54,8 +57,8 @@ class AdminCog(commands.Cog, command_attrs=dict(hidden=True)):
         description="unloads an extension",
     )
     async def _unload(self, ctx: commands.Context, extension: str):
-        if not extension.startswith("extensions."):
-            extension = "extensions." + extension
+        if not extension.startswith("lossdiafaq.extensions."):
+            extension = "lossdiafaq.extensions." + extension
         
         await self.bot.unload_extension(extension)
         return await ctx.send("extension unloaded")
@@ -66,8 +69,8 @@ class AdminCog(commands.Cog, command_attrs=dict(hidden=True)):
         description="reloads an extension",
     )
     async def _reload(self, ctx: commands.Context, extension: str):
-        if not extension.startswith("extensions."):
-            extension = "extensions." + extension
+        if not extension.startswith("lossdiafaq.extensions."):
+            extension = "lossdiafaq.extensions." + extension
         
         await self.bot.reload_extension(extension)
         return await ctx.send("extension reloaded")
@@ -78,8 +81,8 @@ class AdminCog(commands.Cog, command_attrs=dict(hidden=True)):
         description="loads an extension",
     )
     async def _load(self, ctx: commands.Context, extension: str):
-        if not extension.startswith("extensions."):
-            extension = "extensions." + extension
+        if not extension.startswith("lossdiafaq.extensions."):
+            extension = "lossdiafaq.extensions." + extension
         
         await self.bot.load_extension(extension)
         return await ctx.send("extension loaded")
