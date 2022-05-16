@@ -2,7 +2,6 @@ from pathlib import Path
 
 import discord
 
-BOT_PREFIX = "$"
 BOT_LOGGING_CHANNEL_ID = 917903722871398421
 BOT_EXTENSIONS_PATH = Path("./lossdiafaq/extensions")
 
