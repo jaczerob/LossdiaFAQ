@@ -8,7 +8,22 @@ from lossdiafaq import static
 __all__ = ["NormalEmbed", "ErrorEmbed"]
 
 
-class NormalEmbed(discord.Embed):
+class EmbedField:
+    def __init__(self, *, name: str, value: str, inline: bool = False) -> None:
+        self.name = name
+        self.value = value
+        self.inline = inline
+
+
+class Embed(discord.Embed):
+    def __init__(self, *, color: discord.Color = None, title: Optional[Any] = None, description: Optional[Any] = None):
+        super().__init__(color=color, title=title, description=description)
+
+    def add_field(self, embed_field: EmbedField):
+        super().add_field(name=embed_field.name, value=embed_field.value, inline=embed_field.inline)
+
+
+class NormalEmbed(Embed):
     def __init__(self, *, title: Optional[Any] = None, description: Optional[Any] = None, author: Optional[discord.User | discord.Member] = None):
         super().__init__(color=static.BOT_EMBED_COLOR_NORMAL, title=title, description=description)
 
