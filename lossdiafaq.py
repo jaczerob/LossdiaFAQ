@@ -13,10 +13,12 @@ async def main(test: bool):
 
     if test:
         token = config["test"]["token"]
+        prefix = config["test"]["prefix"]
     else:
         token = config["prod"]["token"]
+        prefix = config["prod"]["prefix"]
 
-    async with LossdiaFAQ() as client:
+    async with LossdiaFAQ(prefix) as client:
         await client.start(token)
 
 
