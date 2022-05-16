@@ -44,9 +44,11 @@ class Utility(commands.Cog):
         -s: elemental staff
         -e: elemental advantage  
         -d: elemental disadvantage
-        -a: elemental amp
+        -a: elemental amp (if absent, will only show magic for Bishop, otherwise will only show magic for BW, FP, and IL)
 
-        ex: $magic x x -al means you are testing with elemental amp and loveless staff
+        examples:
+        $magic x x -al means you are testing with elemental amp and loveless staff ONLY for BW, FP, and IL
+        $magic x x -l means you are testing with a loveless staff ONLY for BS
         """
 
         if ctx.interaction is not None:
