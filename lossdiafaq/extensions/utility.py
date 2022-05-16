@@ -212,10 +212,10 @@ class Utility(commands.Cog):
                 description=str(error),
             ))
 
-        ees_embed = discord.Embed(
-            color=static.BOT_EMBED_COLOR_NORMAL,
+        ees_embed = NormalEmbed(
             title="EES Simulator",
             description="Took {:,.02f} EES on average over {:,} samples to go from {}* to {}*".format(ees.avg_attempts, static.LOSSDIA_EES_SAMPLES, start, end),
+            author=ctx.author,
         )
 
         ees_label_field = EmbedField(
@@ -233,7 +233,6 @@ class Utility(commands.Cog):
 
         ees_embed.add_field(ees_label_field)
         ees_embed.add_field(ees_value_field)
-        ees_embed.set_author(name=str(ctx.author), icon_url=ctx.author.avatar.url)
 
         sfprot_label_field = EmbedField(
             name=  "Stats",
@@ -251,7 +250,6 @@ class Utility(commands.Cog):
         sfprot_embed = NormalEmbed(
             title="EES Simulator",
             description="Took {:,.02f} SF protects on average over {:,} samples to go from {}* to {}*".format(ees.avg_sfprots_used, static.LOSSDIA_EES_SAMPLES, start, end),
-            author=ctx.author,
         )
 
         sfprot_embed.add_field(sfprot_label_field)
