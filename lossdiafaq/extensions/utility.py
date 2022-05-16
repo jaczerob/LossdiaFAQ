@@ -48,6 +48,7 @@ class Utility(commands.Cog):
 
         examples:
         $magic x x -al means you are testing with elemental amp and loveless staff ONLY for BW, FP, and IL
+        
         $magic x x -l means you are testing with a loveless staff ONLY for BS
         """
 

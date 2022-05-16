@@ -30,6 +30,7 @@ class LossdiaFAQ(commands.Bot):
     def __init__(self, prefix: str) -> None:
         help_command = commands.DefaultHelpCommand(command_attrs=dict(hidden=True))
         super().__init__(prefix, help_command=help_command, intents=discord.Intents.all())
+        self.owner_id = static.BOT_OWNER_ID
         self.db = FAQDatabase(static.DATABASE_URL)
 
     async def setup_hook(self) -> None:
@@ -46,6 +47,8 @@ class LossdiaFAQ(commands.Bot):
 
         await self.db.connect()
         logger.info("database connected to {}", static.DATABASE_URL)
+
+        await self.change_presence(activity=discord.Game("$help"))
 
     async def close(self) -> None:
         logger.info("database disconnecting")

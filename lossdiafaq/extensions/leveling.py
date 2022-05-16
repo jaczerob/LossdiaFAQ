@@ -4,6 +4,8 @@ import math
 import random
 import statistics
 
+from lossdiafaq import static
+
 def get_stat_modifier(is_attack: bool) -> float:
 	return 4.2 if is_attack else 2.1
 
@@ -66,6 +68,18 @@ class Leveling(commands.Cog):
 	def __init__(self, bot) -> None:
 		self.bot = bot
 
+	async def cog_check(self, ctx: commands.Context) -> bool:
+		if await self.bot.is_owner(ctx.author):
+			return True
+
+		if ctx.guild is None:
+			return False
+
+		if ctx.channel.id == static.LOSSDIA_BOT_CHANNEL_ID:
+			return True
+
+		return ctx.channel.permissions_for(ctx.author).manage_messages
+
 	@commands.command(
 		name="leveling",
 		description="Displays stat gain boundaries and simulated averages for item leveling, based on input of stats at level 1 (flames/starforce excluded).",
@@ -94,14 +108,14 @@ class Leveling(commands.Cog):
 			simulated += f"- Lv. {x + 2}: stat +{lv7_simulation_stat[2][x][0]} (max: {lv7_simulation_stat[2][x][1]}) (now: {cur_stat}), att +{lv7_simulation_att[2][x][0]} (max: {lv7_simulation_att[2][x][1]}) (now: {cur_att})\n"
 
 		await ctx.send(f"""{"Weapon" if is_weapon else "Armor"}: Stats at level 1 -> primary {main_stat}, attack {attack}.\n
-Highest possible stats @ level 5 (stat: {highest_possible_stat_lv5}, att: {highest_possible_att_lv5})
-Average @ level 5 (stat: {average_stat_lv5}, att: {average_att_lv5})
-Highest possible stats @ level 7 (stat: {highest_possible_stat_lv7}, att: {highest_possible_att_lv7})
-Average @ level 7 (stat: {average_stat_lv7}, att: {average_att_lv7})\n
-Simulation:
-```
-{simulated.strip()}
-```""")
+	Highest possible stats @ level 5 (stat: {highest_possible_stat_lv5}, att: {highest_possible_att_lv5})
+	Average @ level 5 (stat: {average_stat_lv5}, att: {average_att_lv5})
+	Highest possible stats @ level 7 (stat: {highest_possible_stat_lv7}, att: {highest_possible_att_lv7})
+	Average @ level 7 (stat: {average_stat_lv7}, att: {average_att_lv7})\n
+	Simulation:
+	```
+	{simulated.strip()}
+	```""")
 
 async def setup(bot) -> None:
 	await bot.add_cog(Leveling(bot))

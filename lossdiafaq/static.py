@@ -2,6 +2,8 @@ from pathlib import Path
 
 import discord
 
+BOT_OWNER_ID = 476226626464645135
+
 BOT_LOGGING_CHANNEL_ID = 917903722871398421
 BOT_EXTENSIONS_PATH = Path("./lossdiafaq/extensions")
 
