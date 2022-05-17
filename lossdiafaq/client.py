@@ -59,16 +59,19 @@ class LossdiaFAQ(commands.Bot):
         return await super().on_message(message)
 
     async def on_error(self, event_method: str, /, *args: Any, **kwargs: Any) -> None:
-        exc, exc_info, tb = sys.exc_info()
-
-        if isinstance(exc_info, commands.CommandRegistrationError):
-            return
+        if len(args) > 0 and isinstance(args[0], (commands.CommandInvokeError, commands.HybridCommandError, )):
+            print("meow")
+            logger.opt(exception=args[0]).error("error during runtime of {}", event_method)
+            tb = "".join(traceback.format_exception(args[0]))
         else:
-            logger.opt(exception=True).error("error during runtime of {}", event_method)
-            tb = "".join(traceback.format_exception(exc, exc_info, tb))
+            exc_info = sys.exc_info()
+            if isinstance(exc_info[1], commands.CommandRegistrationError):
+                return
+
+            logger.opt(exception=exc_info).error("error during runtime of {}", event_method)
+            tb = "".join(traceback.format_exception(exc_info[0], value=exc_info[1], tb=exc_info[2]))
 
         _, tb = format_traceback(tb)
-        
         if channel := self.get_channel(static.BOT_LOGGING_CHANNEL_ID):
             await channel.send(tb)
 
