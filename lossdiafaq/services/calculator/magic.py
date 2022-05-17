@@ -12,6 +12,28 @@ class FlagError(Exception):
 
 
 class Flags:
+    """A parser for flags in the Magic calculator
+    
+    Attributes
+    ----------
+    flags : :class:`str`
+        The flags string passed to the Magic calculator
+
+    empty : :class:`bool`
+        Whether or not there are no flags
+
+    has_amp : :class:`bool`
+        Whether to calculate with the elemental amplification multiplier
+
+    has_adv : :class:`bool`
+        Whether to calculate with the elemental advantage multiplier
+
+    has_disadv : :class:`bool`
+        Whether to calculate with the elemental disadvantage multiplier
+
+    has_staff : :class:`bool`
+        Whether to calculate with the staff multiplier
+    """
     def __init__(self, flags: Optional[str]) -> None:
         self.flags = flags
         self.empty = True
@@ -21,6 +43,7 @@ class Flags:
         self.has_staff = False
 
     def parse(self) -> None:
+        """Parses the passed flags"""
         if self.flags is None:
             return
 
@@ -62,6 +85,28 @@ class Flags:
 
 
 class MagicCalculator:
+    """A calculator for Magic Damage with the given inputs
+    
+    Attributes
+    ----------
+    hp : :class:`int`
+        The HP of the monster
+
+    spell_attack : :class:`int`
+        The spell attack of the skill being used
+
+    flags : :class:`Flags`
+        The flags used for the modifiers
+
+    bw_magic : :class:`int`
+        How much magic a BW needs to one shot
+
+    fpil_magic : :class:`int`
+        How much magic a FP/IL needs to one shot
+
+    bs_magic : :class:`int`
+        How much magic a BS needs to one shot
+    """
     def __init__(self, hp: int, spell_attack: int, flags: Optional[str]) -> None:
         self.hp = hp
         self.spell_attack = spell_attack
@@ -74,11 +119,11 @@ class MagicCalculator:
 
 
     def calculate(self):
-        """calculates how much magic is needed to one shot a monster
+        """Calculates how much magic is needed to one shot a monster
 
         Raises
         ------
-        FlagError
+        :class:`FlagError`
             error while parsing flags
         """
 
@@ -105,6 +150,7 @@ class MagicCalculator:
 
 
     def _calculate_magic(self, modifier: float) -> int:
+        # who said the quadratic formula is useless out of high school
         a = 0.0000333333 * modifier / self.hp
         b = 0.023 * modifier / self.hp
         c = -1.

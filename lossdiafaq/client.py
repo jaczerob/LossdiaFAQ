@@ -16,12 +16,31 @@ __all__ = ["LossdiaFAQ"]
 
 
 def format_traceback(tb: str) -> tuple[str | None, str]:
+    """Formats an error traceback to a version easily displayed for Discord
+
+    Wraps the traceback in back ticks to escape all characters
+
+    In case the traceback is over 2,000 characters, it will trim and return the
+    full traceback as well
+    
+    Parameters
+    ----------
+    tb : :class:`str`
+        The error traceback to format
+
+    Returns
+    -------
+    :class:`tuple`[:class:`str` | :class:`None`, :class:`str`]
+        The old traceback, if the traceback is longer than 2,000 characters, and the
+        new formatted traceback
+    """
     old_tb = None
 
     if len(tb) > 2000:
         old_tb = tb
         tb = tb[:1990] + '...'
     
+    # wrap in back ticks to escape all meme characters
     tb = f"```\n{tb}```"
     return old_tb, tb
 
@@ -60,12 +79,13 @@ class LossdiaFAQ(commands.Bot):
 
     async def on_error(self, event_method: str, /, *args: Any, **kwargs: Any) -> None:
         if len(args) > 0 and isinstance(args[0], (commands.CommandInvokeError, commands.HybridCommandError, )):
-            print("meow")
             logger.opt(exception=args[0]).error("error during runtime of {}", event_method)
             tb = "".join(traceback.format_exception(args[0]))
         else:
             exc_info = sys.exc_info()
             if isinstance(exc_info[1], commands.CommandRegistrationError):
+                # this is thrown during $commands/aliases add
+                # for duplicate FAQ commands to bot commands
                 return
 
             logger.opt(exception=exc_info).error("error during runtime of {}", event_method)
@@ -81,6 +101,7 @@ class LossdiaFAQ(commands.Bot):
 
         delete_after = None
         if isinstance(exception, (commands.CommandInvokeError, commands.HybridCommandError, )):
+            # a fatal error within a command that went unchecked
             description = "Uh oh >_<"
             await self.on_error(f'command {ctx.invoked_with}', exception)
         elif isinstance(exception, commands.CheckFailure):

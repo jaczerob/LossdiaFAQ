@@ -203,7 +203,7 @@ class Utility(commands.Cog):
         message = await ctx.reply(f'Running simulation of EES from {start}* to {end}* {static.LOSSDIA_EES_SAMPLES} times...')
         
         try:
-            await self.bot.loop.run_in_executor(self.ees_executor, ees.sample)
+            await self.bot.loop.run_in_executor(self.ees_executor, ees.simulate)
             await message.delete()
         except EESArgumentError as error:
             await message.delete()
@@ -243,7 +243,7 @@ class Utility(commands.Cog):
         sfprot_value_field_description = "{:,.02f}\n{:,}\n{:,}\n{:,.02f}/{:,.02f}\n{:,}/{:,}\n{:,}/{:,}"
         sfprot_value_field = EmbedField(
             name=  "Values",
-            value= sfprot_value_field_description.format(ees.avg_sfprots_used, ees.min_sfprots_used, ees.max_sfprots_used, ees.avg_vp_used, ees.avg_dp_used, ees.min_vp_used, ees.min_dp_used, ees.max_vp_used, ees.max_dp_used),
+            value= sfprot_value_field_description.format(ees.avg_sfprots_used, ees.min_sfprots_used, ees.max_sfprots_used, ees.avg_vp_used, ees.avg_credits_used, ees.min_vp_used, ees.min_credits_used, ees.max_vp_used, ees.max_credits_used),
             inline=True,
         )
         
