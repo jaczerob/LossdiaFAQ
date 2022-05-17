@@ -34,6 +34,9 @@ class FAQDatabase:
         return Command.from_document(document) if document else None
 
     def add_command(self, command: str, description: str) -> bool:
+        if self.get_alias(command):
+            return False
+
         cmd = Command(command, description)
 
         try:
