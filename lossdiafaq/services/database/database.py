@@ -1,4 +1,5 @@
 from typing_extensions import Self
+from pymongo.errors import DuplicateKeyError
 from pymongo.mongo_client import MongoClient
 
 from lossdiafaq import static
@@ -34,8 +35,12 @@ class FAQDatabase:
 
     def add_command(self, command: str, description: str) -> bool:
         cmd = Command(command, description)
-        result = self._commands.insert_one(cmd.to_document())
-        return result.acknowledged
+
+        try:
+            self._commands.insert_one(cmd.to_document())
+            return True
+        except DuplicateKeyError:
+            return False
 
     def update_command(self, command: str, description: str) -> bool:
         result = self._commands.update_one({"_id": command}, {"$set": {"description": description}})
@@ -53,9 +58,16 @@ class FAQDatabase:
         return Alias.from_document(document) if document else None
 
     def add_alias(self, alias: str, command: str) -> bool:
+        if not self.get_command(command):
+            return False
+
         al = Alias(alias, command)
-        result = self._aliases.insert_one(al.to_document())
-        return result.acknowledged
+
+        try:
+            self._aliases.insert_one(al.to_document())
+            return True
+        except DuplicateKeyError:
+            return False
 
     def delete_alias(self, alias: str) -> bool:
         result = self._aliases.delete_one({"_id": alias})
