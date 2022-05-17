@@ -35,7 +35,7 @@ class FAQCog(commands.Cog):
         if ctx.interaction:
             await ctx.defer()
 
-        all_commands = self.bot.db.get_all()
+        all_commands = sorted(self.bot.db.get_all())
         longest_command = len(max(all_commands, key=len))
         
         chunked_commands: list[list[str]] = []
