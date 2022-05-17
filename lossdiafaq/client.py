@@ -31,7 +31,7 @@ class LossdiaFAQ(commands.Bot):
         help_command = commands.DefaultHelpCommand(command_attrs=dict(hidden=True))
         super().__init__(prefix, help_command=help_command, intents=discord.Intents.all(), owner_id=static.BOT_OWNER_ID, activity=discord.Game(f"{prefix}help"))
         
-        self.db = FAQDatabase(static.DATABASE_URL)
+        self.db = FAQDatabase()
 
     async def setup_hook(self) -> None:
         for file in static.BOT_EXTENSIONS_PATH.glob("*.py"):
@@ -45,12 +45,9 @@ class LossdiaFAQ(commands.Bot):
             except commands.ExtensionError:
                 logger.opt(exception=True).error("could not load extension: {}", extension)
 
-        await self.db.connect()
-        logger.info("database connected to {}", static.DATABASE_URL)
-
     async def close(self) -> None:
         logger.info("database disconnecting")
-        await self.db.disconnect()
+        self.db.disconnect()
 
         logger.info("bot closing")
         return await super().close()
@@ -62,14 +59,13 @@ class LossdiaFAQ(commands.Bot):
         return await super().on_message(message)
 
     async def on_error(self, event_method: str, /, *args: Any, **kwargs: Any) -> None:
-        if len(args) > 0 and isinstance(args[0], (commands.CommandInvokeError, commands.HybridCommandError, )):
-            logger.opt(exception=args[0]).error("error during runtime of {}", event_method)
-            tb = "".join(traceback.format_exception(args[0]))
+        exc, exc_info, tb = sys.exc_info()
+
+        if isinstance(exc_info, commands.CommandRegistrationError):
+            return
         else:
-            exc_info = sys.exc_info()
-            logger.opt(exception=exc_info).error("error during runtime of {}", event_method)
-            
-            tb = "".join(traceback.format_exception(exc_info[0], value=exc_info[1], tb=exc_info[2]))
+            logger.opt(exception=True).error("error during runtime of {}", event_method)
+            tb = "".join(traceback.format_exception(exc, exc_info, tb))
 
         _, tb = format_traceback(tb)
         

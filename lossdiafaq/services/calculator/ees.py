@@ -1,3 +1,4 @@
+import math
 import random
 import sys
 
@@ -90,21 +91,18 @@ class EESCalculator:
         return
 
     def _enhance(self, level: int) -> tuple[int, bool]:
-        rate = max(static.LOSSDIA_EES_MIN_RATE, static.LOSSDIA_EES_BASE_RATE - static.LOSSDIA_EES_REDUCTION_RATE * level)
-        random_result = random.random()
-        ees_result = random_result < rate
+        rate = math.ceil(max(static.LOSSDIA_EES_BASE_RATE - static.LOSSDIA_EES_REDUCTION_RATE * level, static.LOSSDIA_EES_MIN_RATE) * 100)
+        random_result = random.randint(0, 100)
+        ees_result = random_result <= rate
 
-        if level > static.LOSSDIA_EES_MIN_SFPROT_LEVEL:
-            sfprot_used = (level % static.LOSSDIA_EES_MIN_SFPROT_LEVEL) >= (static.LOSSDIA_EES_MIN_SFPROT_LEVEL - self.delta)
-        else:
-            sfprot_used = False
+        sfprot_used = (level % static.LOSSDIA_EES_MIN_SFPROT_LEVEL) >= (static.LOSSDIA_EES_MIN_SFPROT_LEVEL - self.delta) and level > static.LOSSDIA_EES_MIN_SFPROT_LEVEL
 
-        if ees_result:
-            return level + 1, sfprot_used
-        elif not ees_result and not sfprot_used:
-            return level - 1, sfprot_used
-        else:
+        if not ees_result and level % 5 == 0:
             return level, sfprot_used
+        elif not ees_result:
+            return level - 1 + int(sfprot_used), sfprot_used
+        else:
+            return level + 1, sfprot_used
 
     def _attempt_ees(self) -> tuple[int, int]:
         current_level = self.start

@@ -1,8 +1,8 @@
-import sqlite3
-
 from discord.ext import commands
 
 from lossdiafaq.client import LossdiaFAQ
+from lossdiafaq.services.discord.embed import ErrorEmbed
+
 
 class ModeratorCog(commands.Cog):
     def __init__(self, bot: LossdiaFAQ) -> None:
@@ -17,44 +17,109 @@ class ModeratorCog(commands.Cog):
 
         return ctx.channel.permissions_for(ctx.author).manage_messages
 
-    @commands.command(
+    async def cog_before_invoke(self, ctx: commands.Context) -> None:
+        for arg in ctx.args[2:]:
+            if self.bot.get_command(arg):
+                await ctx.reply(embed=ErrorEmbed(title="Command Error!", description=f"The command {arg} already exists!"))
+                raise commands.CommandRegistrationError(arg)
+
+    @commands.group(
+        name="commands",
+        description="a group to manage FAQ commands and aliases",
+    )
+    async def _commands(self, ctx: commands.Context):
+        """FAQ command manager
+
+        To add a command, $commands add <command> <description>
+        To update a command, $commands update <command> <description>
+        To delete a command, $commands delete <command>
+        """
+
+        if ctx.invoked_subcommand:
+            return
+
+        return await ctx.send_help(ctx.command)
+
+    @_commands.command(
         name="add",
         usage="<command> <description>",
         description="adds a FAQ command",
     )
-    async def _add(self, ctx: commands.Context, command: str, *, description: str):
-        """ex: $add test this is a test"""
-        try:
-            await self.bot.db.create(command, description)
-            return await ctx.send(f"{command} added.")
-        except sqlite3.OperationalError:
-            return await ctx.send(f"{command} already exists.")
+    async def _commands_add(self, ctx: commands.Context, command: str, *, description: str):
+        """ex: $commands add example this is an example"""
 
-    @commands.command(
+        if self.bot.db.add_command(command, description):
+            return await ctx.reply(f"{command} added.")
+        else:
+            return await ctx.reply(f"{command} was not added.")
+
+    @_commands.command(
         name="update",
         usage="<command> <description>",
         description="updates a FAQ command",
     )
-    async def _update(self, ctx: commands.Context, command: str, *, description: str):
-        """ex: $update test this is a test updated"""
-        try:
-            await self.bot.db.update(command, description)
-            return await ctx.send(f"{command} updated.")
-        except sqlite3.OperationalError:
-            return await ctx.send(f"{command} does not exist.")
+    async def _commands_update(self, ctx: commands.Context, command: str, *, description: str):
+        """ex: $commands update example this is an example updated"""
 
-    @commands.command(
+        if self.bot.db.update_command(command, description):
+            return await ctx.reply(f"{command} updated.")
+        else:
+            return await ctx.reply(f"{command} was not updated.")
+
+    @_commands.command(
         name="delete",
         usage="<command>",
         description="deletes a FAQ command",
     )
-    async def _delete(self, ctx: commands.Context, command: str):
-        """ex: $delete test"""
-        try:
-            await self.bot.db.delete(command)
-            return await ctx.send(f"{command} deleted.")
-        except sqlite3.OperationalError:
-            return await ctx.send(f"{command} does not exist.")
+    async def _commands_delete(self, ctx: commands.Context, command: str):
+        """ex: $commands delete example"""
+
+        if self.bot.db.delete_command(command):
+            return await ctx.reply(f"{command} deleted.")
+        else:
+            return await ctx.reply(f"{command} was not deleted.")
+
+    @commands.group(
+        name="aliases",
+        description="a group to manage FAQ aliases and aliases",
+    )
+    async def _aliases(self, ctx: commands.Context):
+        """FAQ alias manager
+
+        To add an alias, $aliases add <alias> <command>
+        To delete an alias, $aliases delete <alias>
+        """
+
+        if ctx.invoked_subcommand:
+            return
+
+        return await ctx.send_help(ctx.command)
+
+    @_aliases.command(
+        name="add",
+        usage="<alias> <command>",
+        description="adds a FAQ alias",
+    )
+    async def _alias_add(self, ctx: commands.Context, alias: str, command: str):
+        """ex: $aliases add example_alias example_command"""
+
+        if self.bot.db.add_alias(alias, command):
+            return await ctx.reply(f"{alias} added.")
+        else:
+            return await ctx.reply(f"{alias} was not added.")
+
+    @_aliases.command(
+        name="delete",
+        usage="<alias>",
+        description="deletes a FAQ alias",
+    )
+    async def _alias_delete(self, ctx: commands.Context, alias: str):
+        """ex: $aliases delete example_alias"""
+
+        if self.bot.db.delete_alias(alias):
+            return await ctx.reply(f"{alias} deleted.")
+        else:
+            return await ctx.reply(f"{alias} was not deleted.")
 
 
 async def setup(bot: LossdiaFAQ) -> None:

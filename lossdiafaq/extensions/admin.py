@@ -21,7 +21,7 @@ class AdminCog(commands.Cog, command_attrs=dict(hidden=True)):
         description="restarts the bot",
     )
     async def _restart(self, ctx: commands.Context):
-        await ctx.send("restarting")
+        await ctx.reply("restarting")
         return await self.bot.close()
 
     @admin_group.command(
@@ -30,14 +30,14 @@ class AdminCog(commands.Cog, command_attrs=dict(hidden=True)):
     )
     async def _sync(self, ctx: commands.Context):
         await self.bot.tree.sync()
-        await ctx.send("synced!")
+        await ctx.reply("synced!")
 
     @admin_group.command(
         name="say",
         description="makes the bot say some text",
     )
     async def _say(self, ctx: commands.Context, *, text: str):
-        return await ctx.send(text)
+        return await ctx.reply(text)
 
     @admin_group.group(
         name="extension",
@@ -49,7 +49,7 @@ class AdminCog(commands.Cog, command_attrs=dict(hidden=True)):
             
         extensions = ", ".join(self.bot.extensions.keys())
         text = f"The following extensions are loaded: {extensions}"
-        return await ctx.send(text)
+        return await ctx.reply(text)
 
     @extensions_group.command(
         name="unload",
@@ -61,7 +61,7 @@ class AdminCog(commands.Cog, command_attrs=dict(hidden=True)):
             extension = "lossdiafaq.extensions." + extension
         
         await self.bot.unload_extension(extension)
-        return await ctx.send("extension unloaded")
+        return await ctx.reply("extension unloaded")
 
     @extensions_group.command(
         name="reload",
@@ -73,7 +73,7 @@ class AdminCog(commands.Cog, command_attrs=dict(hidden=True)):
             extension = "lossdiafaq.extensions." + extension
         
         await self.bot.reload_extension(extension)
-        return await ctx.send("extension reloaded")
+        return await ctx.reply("extension reloaded")
 
     @extensions_group.command(
         name="load",
@@ -85,7 +85,7 @@ class AdminCog(commands.Cog, command_attrs=dict(hidden=True)):
             extension = "lossdiafaq.extensions." + extension
         
         await self.bot.load_extension(extension)
-        return await ctx.send("extension loaded")
+        return await ctx.reply("extension loaded")
 
 
 

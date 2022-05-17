@@ -10,7 +10,10 @@ BOT_EXTENSIONS_PATH = Path("./lossdiafaq/extensions")
 BOT_EMBED_COLOR_NORMAL = discord.Color.from_str("#bbbefe")
 BOT_EMBED_COLOR_ERROR = discord.Color.red()
 
-DATABASE_URL = "sqlite:///lossdia.db"
+MONGO_PORT = 27017
+MONGO_DATABASE = "lossdia"
+MONGO_COLLECTION_COMMANDS = "commands"
+MONGO_COLLECTION_ALIASES = "aliases"
 
 LOSSDIA_BOT_ID = 614221348780113920
 LOSSDIA_BOT_CHANNEL_ID = 923221574016958474

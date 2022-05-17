@@ -59,7 +59,7 @@ class Utility(commands.Cog):
         try:
             magic.calculate()
         except FlagError as error:
-            return await ctx.send(embed=ErrorEmbed(
+            return await ctx.reply(embed=ErrorEmbed(
                 title="Flag Error",
                 description=str(error),
             ))
@@ -111,7 +111,7 @@ class Utility(commands.Cog):
 
         magic_embed.add_field(class_field)
         magic_embed.add_field(magic_field)
-        return await ctx.send(embed=magic_embed)
+        return await ctx.reply(embed=magic_embed)
 
     @commands.hybrid_command(
         name="time",
@@ -128,7 +128,7 @@ class Utility(commands.Cog):
         time_until_reset = str(reset_delta).split('.')[0]
         
         embed = NormalEmbed(title="Server Time", description=f"The current server time is: {time} UTC\nTime until reset: {time_until_reset}", author=ctx.author)
-        return await ctx.send(embed=embed)
+        return await ctx.reply(embed=embed)
 
     @commands.hybrid_command(
         name="online",
@@ -137,14 +137,14 @@ class Utility(commands.Cog):
     async def _online(self, ctx: commands.Context):
         """displays the game's current online count"""
         if not (lossdia := self.bot.get_guild(static.LOSSDIA_GUILD_ID)):
-            return await ctx.send("I could not get the Lossdia Discord server.")
+            return await ctx.reply("I could not get the Lossdia Discord server.")
 
         lossdia_bot = lossdia.get_member(static.LOSSDIA_BOT_ID)
         if not lossdia_bot or not lossdia_bot.activities:
-            return await ctx.send('I cannot get the online count currently.')
+            return await ctx.reply('I cannot get the online count currently.')
 
         online_count = lossdia_bot.activities[0].name.split(' ')[3]
-        return await ctx.send(f'Online Users: {online_count}')
+        return await ctx.reply(f'Online Users: {online_count}')
 
     @commands.hybrid_command(
         name="flame",
@@ -178,7 +178,7 @@ class Utility(commands.Cog):
 
         flames_embed.add_field(eflame_field)
         flames_embed.add_field(pflame_field)
-        return await ctx.send(embed=flames_embed)
+        return await ctx.reply(embed=flames_embed)
 
 
     @commands.hybrid_command(
@@ -200,14 +200,14 @@ class Utility(commands.Cog):
             await ctx.defer()
 
         ees = EESCalculator(start, end, protect_delta)
-        message = await ctx.send(f'Running simulation of EES from {start}* to {end}* {static.LOSSDIA_EES_SAMPLES} times...')
+        message = await ctx.reply(f'Running simulation of EES from {start}* to {end}* {static.LOSSDIA_EES_SAMPLES} times...')
         
         try:
             await self.bot.loop.run_in_executor(self.ees_executor, ees.sample)
             await message.delete()
         except EESArgumentError as error:
             await message.delete()
-            return await ctx.send(embed=ErrorEmbed(
+            return await ctx.reply(embed=ErrorEmbed(
                 title="EES Simulator Argument Error",
                 description=str(error),
             ))
@@ -254,7 +254,7 @@ class Utility(commands.Cog):
 
         sfprot_embed.add_field(sfprot_label_field)
         sfprot_embed.add_field(sfprot_value_field)
-        return await ctx.send(embeds=[ees_embed, sfprot_embed,])
+        return await ctx.reply(embeds=[ees_embed, sfprot_embed,])
 
 
 async def setup(bot: LossdiaFAQ) -> None:

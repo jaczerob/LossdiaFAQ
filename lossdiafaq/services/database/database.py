@@ -1,82 +1,71 @@
-from dataclasses import dataclass
-import functools
-from sqlite3 import OperationalError
-from typing import Optional
+from typing_extensions import Self
+from pymongo.mongo_client import MongoClient
 
-from databases import Database
-
-
-__all__ = ["Command", "FAQDatabase"]
+from lossdiafaq import static
+from lossdiafaq.services.database.types import Alias, Command
 
 
-@dataclass
-class Command:
-    name: str
-    description: str
+__all__ = ["FAQDatabase"]
 
 
 class FAQDatabase:
-    def __init__(self, file_path):
-        self._database = Database(file_path)
+    def __init__(self):
+        self._client = MongoClient(port=static.MONGO_PORT)
+        _db = self._client.get_database(static.MONGO_DATABASE)
 
-    def connected(func):
-        @functools.wraps(func)
-        def inner(self, *args, **kwargs):
-            if not self._database.is_connected:
-                raise ConnectionError('You are not connected to the Database.')
-            
-            return func(self, *args, **kwargs)
-        return inner
+        self._commands = _db.get_collection(static.MONGO_COLLECTION_COMMANDS)
+        self._aliases = _db.get_collection(static.MONGO_COLLECTION_ALIASES)
 
-    @connected
-    async def get_all(self) -> list[Command]:
-        query = 'SELECT * FROM commands;'
-        all_commands = [Command(res["command"], res["description"]) for res in await self._database.fetch_all(query)]
-        return all_commands
+    def get_all(self) -> list[str]:
+        commands_documents = self._commands.find()
+        commands = [document["_id"] for document in commands_documents]
 
-    @connected
-    async def get(self, command: str) -> Optional[Command]:
-        values = {'command': command}
-        query = 'SELECT * FROM commands WHERE command = :command;'
-        resp = await self._database.fetch_one(query=query, values=values)
+        aliases_documents = self._aliases.find()
+        aliases = [document["_id"] for document in aliases_documents]
+        return commands + aliases
 
-        if resp:
-            return Command(resp["command"], resp["description"])
-        else:
-            return None
+    def get_command(self, command_or_alias: str) -> Command | None:
+        document = self._commands.find_one({"_id": command_or_alias})
+        if document is None:
+            if alias := self.get_alias(command_or_alias):
+                document = self._commands.find_one({"_id": alias.command})
 
-    @connected
-    async def delete(self, command: str) -> None:
-        if not await self.get(command):
-            raise OperationalError(f'{command} does not exist.')
+        return Command.from_document(document) if document else None
 
-        values = {'command': command}
-        query = 'DELETE FROM commands WHERE command = :command;'
-        await self._database.execute(query=query, values=values)
+    def add_command(self, command: str, description: str) -> bool:
+        cmd = Command(command, description)
+        result = self._commands.insert_one(cmd.to_document())
+        return result.acknowledged
 
-    @connected
-    async def update(self, command: str, description: str) -> None:
-        if not await self.get(command):
-            raise OperationalError(f'{command} does not exist.')
+    def update_command(self, command: str, description: str) -> bool:
+        result = self._commands.update_one({"_id": command}, {"$set": {"description": description}})
+        return result.matched_count > 0
 
-        values = {'command': command, 'description': description}
-        query = 'UPDATE commands SET description = :description WHERE command = :command;'
-        await self._database.execute(query=query, values=values)
+    def delete_command(self, command: str) -> bool:
+        result = self._commands.delete_one({"_id": command})
+        if deleted := result.deleted_count > 0:
+            self._aliases.delete_many({"command": command})
 
-    @connected
-    async def create(self, command: str, description: str) -> None:
-        if await self.get(command):
-            raise OperationalError(f'{command} already exists.')
+        return deleted
 
-        values = {'command': command, 'description': description}
-        query = 'INSERT INTO commands(command, description) VALUES(:command, :description);'
-        await self._database.execute(query=query, values=values)
+    def get_alias(self, alias: str) -> Alias | None:
+        document = self._aliases.find_one({"_id": alias})
+        return Alias.from_document(document) if document else None
 
-    async def connect(self):
-        await self._database.connect()
+    def add_alias(self, alias: str, command: str) -> bool:
+        al = Alias(alias, command)
+        result = self._aliases.insert_one(al.to_document())
+        return result.acknowledged
 
-    async def disconnect(self):
-        await self._database.disconnect()
+    def delete_alias(self, alias: str) -> bool:
+        result = self._aliases.delete_one({"_id": alias})
+        return result.deleted_count > 0
+        
+    def disconnect(self) -> None:
+        return self._client.close()
 
-    def is_connected(self):
-        return self._database.is_connected
+    def __enter__(self) -> Self:
+        return self
+
+    def __exit__(self, *_) -> None:
+        self.disconnect()
