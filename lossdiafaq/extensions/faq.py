@@ -64,7 +64,7 @@ class FAQCog(commands.Cog):
             return
 
         raw_command = message.content[len(self.bot.command_prefix):].split(' ')
-        command = raw_command[0].lower()
+        command = title = raw_command[0].lower()
         if self.bot.get_command(command):
             return
         
@@ -75,7 +75,7 @@ class FAQCog(commands.Cog):
             if not await self.bot.is_owner(message.author) or not message.channel.permissions_for(message.author).manage_messages:
                 return await message.channel.send(f"Please use the bot channel, {message.author.mention}.", delete_after=5.0)
 
-        embed = NormalEmbed(title=command, description=command.description, author=message.author)
+        embed = NormalEmbed(title=title, description=command.description, author=message.author)
 
         if match := self.image_url_regex.match(command.description):
             image_url = match.group(0)
