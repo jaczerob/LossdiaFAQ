@@ -29,9 +29,9 @@ class FAQDatabase:
         commands_documents = self._commands.find()
         commands = [document["_id"] for document in commands_documents if not document.get("hidden", False)]
 
-        aliases_documents = self._aliases.find()
-        aliases = [document["_id"] for document in aliases_documents]
-        return commands + aliases
+        """aliases_documents = self._aliases.find()
+        aliases = [document["_id"] for document in aliases_documents]"""
+        return commands #+ aliases
 
     def get_command(self, command_or_alias: str) -> Command | None:
         """Gets a command by its name or alias
