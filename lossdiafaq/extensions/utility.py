@@ -156,7 +156,7 @@ class Utility(commands.Cog):
 
         flames_embed = NormalEmbed(
             title="Flames Calculator",
-            description="",
+            description=f"The flame stats for a level {level} item. Overall stats are double that of normal items.",
             author=ctx.author,
         )
 
