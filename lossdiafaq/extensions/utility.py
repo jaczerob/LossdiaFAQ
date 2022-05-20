@@ -226,35 +226,39 @@ class Utility(commands.Cog):
 
         ees_value_field_description = "{:,.02f}\n{:,}\n{:,}\n{:,}\n{:,}\n{:,}"
         ees_value_field = EmbedField(
-            name=  "Values",
-            value= ees_value_field_description.format(ees.avg_attempts, ees.min_attempts, ees.max_attempts, ees.avg_meso_used, ees.min_meso_used, ees.max_meso_used),
+            name="Values",
+            value=ees_value_field_description.format(ees.avg_attempts, ees.min_attempts, ees.max_attempts, ees.avg_meso_used, ees.min_meso_used, ees.max_meso_used),
             inline=True,
         )
 
         ees_embed.add_field(ees_label_field)
         ees_embed.add_field(ees_value_field)
+        embeds = [ees_embed, ]
 
-        sfprot_label_field = EmbedField(
-            name=  "Stats",
-            value= "Average Used\nMinimum Used\nMaximum Used\nAverage VP/Credits Used\nMinimum VP/Credits Used\nMaximum VP/Credits Used",
-            inline=True,
-        )
+        if ees.avg_sfprots_used > 0.0:
+            sfprot_label_field = EmbedField(
+                name=  "Stats",
+                value= "Average Used\nMinimum Used\nMaximum Used\nAverage VP/Credits Used\nMinimum VP/Credits Used\nMaximum VP/Credits Used",
+                inline=True,
+            )
 
-        sfprot_value_field_description = "{:,.02f}\n{:,}\n{:,}\n{:,.02f}/{:,.02f}\n{:,}/{:,}\n{:,}/{:,}"
-        sfprot_value_field = EmbedField(
-            name=  "Values",
-            value= sfprot_value_field_description.format(ees.avg_sfprots_used, ees.min_sfprots_used, ees.max_sfprots_used, ees.avg_vp_used, ees.avg_credits_used, ees.min_vp_used, ees.min_credits_used, ees.max_vp_used, ees.max_credits_used),
-            inline=True,
-        )
-        
-        sfprot_embed = NormalEmbed(
-            title="EES Simulator",
-            description="Took {:,.02f} SF protects on average over {:,} samples to go from {}* to {}*".format(ees.avg_sfprots_used, static.LOSSDIA_EES_SAMPLES, start, end),
-        )
+            sfprot_value_field_description = "{:,.02f}\n{:,}\n{:,}\n{:,.02f}/{:,.02f}\n{:,}/{:,}\n{:,}/{:,}"
+            sfprot_value_field = EmbedField(
+                name=  "Values",
+                value= sfprot_value_field_description.format(ees.avg_sfprots_used, ees.min_sfprots_used, ees.max_sfprots_used, ees.avg_vp_used, ees.avg_credits_used, ees.min_vp_used, ees.min_credits_used, ees.max_vp_used, ees.max_credits_used),
+                inline=True,
+            )
+            
+            sfprot_embed = NormalEmbed(
+                title="EES Simulator",
+                description="Took {:,.02f} SF protects on average over {:,} samples to go from {}* to {}*".format(ees.avg_sfprots_used, static.LOSSDIA_EES_SAMPLES, start, end),
+            )
 
-        sfprot_embed.add_field(sfprot_label_field)
-        sfprot_embed.add_field(sfprot_value_field)
-        return await ctx.reply(embeds=[ees_embed, sfprot_embed,])
+            sfprot_embed.add_field(sfprot_label_field)
+            sfprot_embed.add_field(sfprot_value_field)
+            embeds.append(sfprot_embed)
+
+        return await ctx.reply(embeds=embeds)
 
 
 async def setup(bot: LossdiaFAQ) -> None:
