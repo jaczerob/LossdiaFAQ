@@ -56,8 +56,6 @@ class NormalEmbed(Embed):
             avatar = author.avatar or author.display_avatar
             self.set_author(name=str(author), icon_url=avatar.url)
 
-        self.set_footer(text="Ask (DO NOT PING) olivia rodrigo for any suggestions or a moderator if you would like them to add or update a FAQ command!")
-
 
 class ErrorEmbed(discord.Embed):
     def __init__(self, *, title: Optional[Any] = None, description: Optional[Any] = None):
