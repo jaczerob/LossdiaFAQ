@@ -72,7 +72,7 @@ class FAQCog(commands.Cog):
             return
 
         if message.channel.id != static.LOSSDIA_BOT_CHANNEL_ID and message.guild.id == static.LOSSDIA_GUILD_ID:
-            if not await self.bot.is_owner(message.author) or not message.channel.permissions_for(message.author).manage_messages:
+            if not await self.bot.is_owner(message.author) and not message.channel.permissions_for(message.author).manage_messages:
                 return await message.channel.send(f"Please use the bot channel, {message.author.mention}.", delete_after=5.0)
 
         embed = NormalEmbed(title=title, description=command.description, author=message.author)
