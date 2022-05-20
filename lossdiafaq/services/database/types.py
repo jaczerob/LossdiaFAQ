@@ -45,19 +45,21 @@ class Command(Documentable):
     description : :class:`str`
         The return or description of the command
     """
-    def __init__(self, command: str, description: str) -> None:
+    def __init__(self, command: str, description: str, *, hidden=False) -> None:
         self.command = command
         self.description = description
+        self.hidden = hidden
 
     def to_document(self):
         return {
             '_id': self.command,
             'description': self.description,
+            'hidden': self.hidden,
         }
 
     @classmethod
     def from_document(cls: Self, document: dict[str, Any]) -> Self:
-        return cls(document["_id"], document["description"])
+        return cls(document["_id"], document["description"], hidden=document.get("hidden", False))
 
 
 class Alias(Documentable):
@@ -71,16 +73,18 @@ class Alias(Documentable):
     command : :class:`str`
         The command the alias is representing
     """
-    def __init__(self, alias: str, command: str) -> None:
+    def __init__(self, alias: str, command: str, *, hidden=False) -> None:
         self.alias = alias
         self.command = command
+        self.hidden = hidden
 
     def to_document(self):
         return {
             '_id': self.alias,
             'command': self.command,
+            'hidden': self.hidden,
         }
 
     @classmethod
     def from_document(cls: Self, document: dict[str, Any]) -> Self:
-        return cls(document["_id"], document["command"])
+        return cls(document["_id"], document["command"], hidden=document.get("hidden", False))

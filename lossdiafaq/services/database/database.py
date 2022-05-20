@@ -27,7 +27,7 @@ class FAQDatabase:
             `command` for command and `alias` for alias
         """
         commands_documents = self._commands.find()
-        commands = [document["_id"] for document in commands_documents]
+        commands = [document["_id"] for document in commands_documents if not document.get("hidden", False)]
 
         aliases_documents = self._aliases.find()
         aliases = [document["_id"] for document in aliases_documents]
@@ -56,7 +56,7 @@ class FAQDatabase:
 
         return Command.from_document(document) if document else None
 
-    def add_command(self, command: str, description: str) -> bool:
+    def add_command(self, command: str, description: str, *, hidden=False) -> bool:
         """Adds a command to the database
         
         Parameters
@@ -76,7 +76,7 @@ class FAQDatabase:
             # no duplicate keys with aliases
             return False
 
-        cmd = Command(command, description)
+        cmd = Command(command, description, hidden=hidden)
 
         try:
             self._commands.insert_one(cmd.to_document())

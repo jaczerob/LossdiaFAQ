@@ -52,6 +52,19 @@ class ModeratorCog(commands.Cog):
             return await ctx.reply(f"{command} was not added.")
 
     @_commands.command(
+        name="add_special",
+        usage="<command> <description>",
+        description="adds a special FAQ command",
+    )
+    async def _commands_add_special(self, ctx: Context, command: str, *, description: str):
+        """ex: $commands add example this is an example"""
+
+        if self.bot.db.add_command(command, description, hidden=True):
+            return await ctx.reply(f"{command} added.")
+        else:
+            return await ctx.reply(f"{command} was not added.")
+
+    @_commands.command(
         name="update",
         usage="<command> <description>",
         description="updates a FAQ command",
