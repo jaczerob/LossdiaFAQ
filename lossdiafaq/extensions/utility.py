@@ -61,7 +61,7 @@ class Utility(commands.Cog):
             ))
 
         if magic.flags.empty:
-            magic_embed_description = f"The magic required to one shot a monster with {hp} HP and {spell_attack} spell attack"
+            magic_embed_description = f"The magic required to one shot a monster with {hp:,} HP and {spell_attack:,} spell attack"
         else:
             modifier_message = ''
 
@@ -77,7 +77,7 @@ class Utility(commands.Cog):
             if magic.flags.has_staff:
                 modifier_message += "Staff Multiplier ({:.02f})\n".format(static.LOSSDIA_MAGIC_STAFF_MULTIPLIER)
 
-            magic_embed_description = f"The magic required to one shot a monster with {hp} HP and {spell_attack} spell attack with modifiers:\n\n{modifier_message.strip()}"
+            magic_embed_description = f"The magic required to one shot a monster with {hp:,} HP and {spell_attack:,} spell attack with modifiers:\n\n{modifier_message.strip()}"
 
         magic_embed = NormalEmbed(
             title="Magic Calculator",
