@@ -3,15 +3,14 @@ from datetime import datetime, timedelta
 from typing import Optional
 
 from discord.ext import commands
-import discord
 
 from lossdiafaq import static
 from lossdiafaq.client import LossdiaFAQ
 from lossdiafaq.services.calculator.ees import EESArgumentError, EESCalculator
 from lossdiafaq.services.calculator.flame import FlameCalculator
 from lossdiafaq.services.calculator.magic import FlagError, MagicCalculator
-from lossdiafaq.services.discord import NormalEmbed
-from lossdiafaq.services.discord.embed import EmbedField, ErrorEmbed
+from lossdiafaq.services.discord.embed import NormalEmbed, EmbedField, ErrorEmbed
+from lossdiafaq.services.discord.context import Context
 
 
 class Utility(commands.Cog):
@@ -19,24 +18,21 @@ class Utility(commands.Cog):
         self.bot = bot
         self.ees_executor = ThreadPoolExecutor(max_workers=3)
 
-    async def cog_check(self, ctx: commands.Context) -> bool:
-        if await self.bot.is_owner(ctx.author):
+    async def cog_check(self, ctx: Context) -> bool:
+        if ctx.in_dm:
             return True
 
-        if ctx.guild is None:
-            return False
-
-        if ctx.channel.id == static.LOSSDIA_BOT_CHANNEL_ID:
+        if not ctx.in_lossdia or ctx.in_bot_channel:
             return True
 
-        return ctx.channel.permissions_for(ctx.author).manage_messages
+        return ctx.is_owner or ctx.is_moderator
 
     @commands.hybrid_command(
         name="magic",
         description="shows how much magic is needed to one shot a monster with given HP",
         usage="<hp> <spell attack> [<flags>]",
     )
-    async def _magic(self, ctx: commands.Context, hp: int, spell_attack: int, *, flags: Optional[str]):
+    async def _magic(self, ctx: Context, hp: int, spell_attack: int, *, flags: Optional[str]):
         """shows how much magic is needed to one shot a monster with given HP
 
         flags include (not in any order):
@@ -117,7 +113,7 @@ class Utility(commands.Cog):
         name="time",
         description="displays the current server time",
     )
-    async def _time(self, ctx: commands.Context):
+    async def _time(self, ctx: Context):
         """displays the current server time"""
         time = datetime.utcnow().strftime('%d %b, %Y %H:%M:%S')
 
@@ -134,7 +130,7 @@ class Utility(commands.Cog):
         name="online",
         description="displays the game's current online count",
     )
-    async def _online(self, ctx: commands.Context):
+    async def _online(self, ctx: Context):
         """displays the game's current online count"""
         if not (lossdia := self.bot.get_guild(static.LOSSDIA_GUILD_ID)):
             return await ctx.reply("I could not get the Lossdia Discord server.")
@@ -152,7 +148,7 @@ class Utility(commands.Cog):
         usage="<item level>",
         aliases=["flames",]
     )
-    async def _flame(self, ctx: commands.Context, level: int):
+    async def _flame(self, ctx: Context, level: int):
         """shows the flame range for a certain level of gear"""
 
         flames = FlameCalculator(level)
@@ -186,7 +182,7 @@ class Utility(commands.Cog):
         description="simulates EES from start to end",
         usage="<start> <end> <protect delta>",
     )
-    async def _ees(self, ctx: commands.Context, start: int, end: int, protect_delta: int):
+    async def _ees(self, ctx: Context, start: int, end: int, protect_delta: int):
         """simulates EES from start to end
         
         start must be a number between 0 and 14

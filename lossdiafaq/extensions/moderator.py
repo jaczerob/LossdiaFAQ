@@ -2,22 +2,20 @@ from discord.ext import commands
 
 from lossdiafaq.client import LossdiaFAQ
 from lossdiafaq.services.discord.embed import ErrorEmbed
+from lossdiafaq.services.discord.context import Context
 
 
 class ModeratorCog(commands.Cog):
     def __init__(self, bot: LossdiaFAQ) -> None:
         self.bot = bot
 
-    async def cog_check(self, ctx: commands.Context) -> bool:
-        if await self.bot.is_owner(ctx.author):
-            return True
-
-        if ctx.guild is None:
+    async def cog_check(self, ctx: Context) -> bool:
+        if ctx.in_dm:
             return False
 
-        return ctx.channel.permissions_for(ctx.author).manage_messages
+        return ctx.is_owner or ctx.is_moderator
 
-    async def cog_before_invoke(self, ctx: commands.Context) -> None:
+    async def cog_before_invoke(self, ctx: Context) -> None:
         for arg in ctx.args[2:]:
             if self.bot.get_command(arg):
                 await ctx.reply(embed=ErrorEmbed(title="Command Error!", description=f"The command {arg} already exists!"))
@@ -27,7 +25,7 @@ class ModeratorCog(commands.Cog):
         name="commands",
         description="a group to manage FAQ commands and aliases",
     )
-    async def _commands(self, ctx: commands.Context):
+    async def _commands(self, ctx: Context):
         """FAQ command manager
 
         To add a command, $commands add <command> <description>
@@ -45,7 +43,7 @@ class ModeratorCog(commands.Cog):
         usage="<command> <description>",
         description="adds a FAQ command",
     )
-    async def _commands_add(self, ctx: commands.Context, command: str, *, description: str):
+    async def _commands_add(self, ctx: Context, command: str, *, description: str):
         """ex: $commands add example this is an example"""
 
         if self.bot.db.add_command(command, description):
@@ -58,7 +56,7 @@ class ModeratorCog(commands.Cog):
         usage="<command> <description>",
         description="updates a FAQ command",
     )
-    async def _commands_update(self, ctx: commands.Context, command: str, *, description: str):
+    async def _commands_update(self, ctx: Context, command: str, *, description: str):
         """ex: $commands update example this is an example updated"""
 
         if self.bot.db.update_command(command, description):
@@ -71,7 +69,7 @@ class ModeratorCog(commands.Cog):
         usage="<command>",
         description="deletes a FAQ command",
     )
-    async def _commands_delete(self, ctx: commands.Context, command: str):
+    async def _commands_delete(self, ctx: Context, command: str):
         """ex: $commands delete example"""
 
         if self.bot.db.delete_command(command):
@@ -83,7 +81,7 @@ class ModeratorCog(commands.Cog):
         name="aliases",
         description="a group to manage FAQ aliases and aliases",
     )
-    async def _aliases(self, ctx: commands.Context):
+    async def _aliases(self, ctx: Context):
         """FAQ alias manager
 
         To add an alias, $aliases add <alias> <command>
@@ -100,7 +98,7 @@ class ModeratorCog(commands.Cog):
         usage="<alias> <command>",
         description="adds a FAQ alias",
     )
-    async def _alias_add(self, ctx: commands.Context, alias: str, command: str):
+    async def _alias_add(self, ctx: Context, alias: str, command: str):
         """ex: $aliases add example_alias example_command"""
 
         if self.bot.db.add_alias(alias, command):
@@ -113,7 +111,7 @@ class ModeratorCog(commands.Cog):
         usage="<alias>",
         description="deletes a FAQ alias",
     )
-    async def _alias_delete(self, ctx: commands.Context, alias: str):
+    async def _alias_delete(self, ctx: Context, alias: str):
         """ex: $aliases delete example_alias"""
 
         if self.bot.db.delete_alias(alias):

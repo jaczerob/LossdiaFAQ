@@ -6,6 +6,7 @@ import statistics
 
 from lossdiafaq import static
 from lossdiafaq.client import LossdiaFAQ
+from lossdiafaq.services.discord.context import Context
 
 
 def rand_stat(base: int) -> int:
@@ -72,24 +73,21 @@ class Leveling(commands.Cog):
 	def __init__(self, bot: LossdiaFAQ) -> None:
 		self.bot = bot
 
-	async def cog_check(self, ctx: commands.Context) -> bool:
-		if await self.bot.is_owner(ctx.author):
+	async def cog_check(self, ctx: Context) -> bool:
+		if ctx.in_dm:
 			return True
 
-		if ctx.guild is None:
-			return False
-
-		if ctx.channel.id == static.LOSSDIA_BOT_CHANNEL_ID:
+		if not ctx.in_lossdia or ctx.in_bot_channel:
 			return True
 
-		return ctx.channel.permissions_for(ctx.author).manage_messages
+		return ctx.is_owner or ctx.is_moderator
 
 	@commands.command(
 		name="leveling",
 		description="Displays stat gain boundaries and simulated averages for item leveling, based on input of stats at level 1 (flames/starforce excluded).",
 		usage="<stat> <attack>",
 	)
-	async def _level(self, ctx: commands.Context, main_stat: int, attack: int):
+	async def _level(self, ctx: Context, main_stat: int, attack: int):
 		highest_possible_stat_lv5: int = simulate_levels(main_stat, False, 5)[1]
 		average_stat_lv5: int = get_average(main_stat, False, 5)
 		highest_possible_att_lv5: int = simulate_levels(attack, True, 5)[1]

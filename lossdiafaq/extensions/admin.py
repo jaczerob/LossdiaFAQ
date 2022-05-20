@@ -1,13 +1,14 @@
 from discord.ext import commands
 
 from lossdiafaq.client import LossdiaFAQ
+from lossdiafaq.services.discord.context import Context
 
 class AdminCog(commands.Cog, command_attrs=dict(hidden=True)):
     def __init__(self, bot: LossdiaFAQ) -> None:
         self.bot = bot
 
-    async def cog_check(self, ctx: commands.Context) -> bool:
-        return await self.bot.is_owner(ctx.author)
+    async def cog_check(self, ctx: Context) -> bool:
+        return ctx.is_owner
 
     @commands.group(
         name="admin",
@@ -20,7 +21,7 @@ class AdminCog(commands.Cog, command_attrs=dict(hidden=True)):
         name="restart",
         description="restarts the bot",
     )
-    async def _restart(self, ctx: commands.Context):
+    async def _restart(self, ctx: Context):
         await ctx.reply("restarting")
         return await self.bot.close()
 
@@ -28,7 +29,7 @@ class AdminCog(commands.Cog, command_attrs=dict(hidden=True)):
         name="sync",
         description="syncs all application commands",
     )
-    async def _sync(self, ctx: commands.Context):
+    async def _sync(self, ctx: Context):
         await self.bot.tree.sync()
         await ctx.reply("synced!")
 
@@ -36,14 +37,14 @@ class AdminCog(commands.Cog, command_attrs=dict(hidden=True)):
         name="say",
         description="makes the bot say some text",
     )
-    async def _say(self, ctx: commands.Context, *, text: str):
+    async def _say(self, ctx: Context, *, text: str):
         return await ctx.reply(text)
 
     @admin_group.group(
         name="extension",
         description="shows all loaded extensions",
     )
-    async def extensions_group(self, ctx: commands.Context):
+    async def extensions_group(self, ctx: Context):
         if ctx.invoked_subcommand:
             return
             
@@ -56,7 +57,7 @@ class AdminCog(commands.Cog, command_attrs=dict(hidden=True)):
         usage="<extension>",
         description="unloads an extension",
     )
-    async def _unload(self, ctx: commands.Context, extension: str):
+    async def _unload(self, ctx: Context, extension: str):
         if not extension.startswith("lossdiafaq.extensions."):
             extension = "lossdiafaq.extensions." + extension
         
@@ -68,7 +69,7 @@ class AdminCog(commands.Cog, command_attrs=dict(hidden=True)):
         usage="<extension>",
         description="reloads an extension",
     )
-    async def _reload(self, ctx: commands.Context, extension: str):
+    async def _reload(self, ctx: Context, extension: str):
         if not extension.startswith("lossdiafaq.extensions."):
             extension = "lossdiafaq.extensions." + extension
         
@@ -80,7 +81,7 @@ class AdminCog(commands.Cog, command_attrs=dict(hidden=True)):
         usage="<extension>",
         description="loads an extension",
     )
-    async def _load(self, ctx: commands.Context, extension: str):
+    async def _load(self, ctx: Context, extension: str):
         if not extension.startswith("lossdiafaq.extensions."):
             extension = "lossdiafaq.extensions." + extension
         

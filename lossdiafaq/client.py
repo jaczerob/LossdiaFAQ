@@ -9,6 +9,7 @@ import discord
 
 from lossdiafaq.services.database.database import FAQDatabase
 from lossdiafaq.services.discord.embed import ErrorEmbed
+from lossdiafaq.services.discord.context import Context
 import lossdiafaq.static as static
 
 
@@ -64,6 +65,9 @@ class LossdiaFAQ(commands.Bot):
             except commands.ExtensionError:
                 logger.opt(exception=True).error("could not load extension: {}", extension)
 
+    async def get_context(self, origin: discord.Message | discord.Interaction, /, *, cls=Context) -> Context:
+        return await super().get_context(origin, cls=cls)
+
     async def close(self) -> None:
         logger.info("database disconnecting")
         self.db.disconnect()
@@ -95,7 +99,7 @@ class LossdiaFAQ(commands.Bot):
         if channel := self.get_channel(static.BOT_LOGGING_CHANNEL_ID):
             await channel.send(tb)
 
-    async def on_command_error(self, ctx: commands.Context, exception: commands.CommandError, /) -> None:
+    async def on_command_error(self, ctx: Context, exception: commands.CommandError, /) -> None:
         if isinstance(exception, (errors.Forbidden, commands.CommandNotFound, )):
             return
 
