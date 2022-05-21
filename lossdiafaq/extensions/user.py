@@ -55,7 +55,7 @@ class User(commands.Cog):
         if ctx.author.premium_since:
             boosted_since = discord.utils.format_dt(ctx.author.premium_since)
             boosted_since_relative = discord.utils.format_dt(ctx.author.premium_since, style="R")
-            guild_information_field.value += f"💎 🥶 Boosted {ctx.guild} since {boosted_since} ({boosted_since_relative})"
+            guild_information_field.value += f"Boosted {ctx.guild} since {boosted_since} ({boosted_since_relative})"
 
         embed.add_field(guild_information_field)
         return await ctx.reply(embed=embed)
