@@ -176,7 +176,6 @@ class Utility(commands.Cog):
         flames_embed.add_field(pflame_field)
         return await ctx.reply(embed=flames_embed)
 
-
     @commands.hybrid_command(
         name="ees",
         description="simulates EES from start to end",
