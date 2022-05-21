@@ -50,7 +50,7 @@ class User(commands.Cog):
         guild_information_field = EmbedField(name="ℹ️ Guild Information", value="")
         guild_information_field.value += f"Nickname: {ctx.author.nick}\n" if ctx.author.nick else ""
         guild_information_field.value += f"Joined {ctx.guild} at {joined_at} ({joined_at_relative})\n"
-        guild_information_field.value += f"Join position: {join_position}/{ctx.guild.member_count}"
+        guild_information_field.value += f"Join position: {join_position}/{ctx.guild.member_count}\n"
 
         if ctx.author.premium_since:
             boosted_since = discord.utils.format_dt(ctx.author.premium_since)
