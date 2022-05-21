@@ -5,7 +5,7 @@ from lossdiafaq.services.discord.embed import ErrorEmbed
 from lossdiafaq.services.discord.context import Context
 
 
-class ModeratorCog(commands.Cog):
+class Moderator(commands.Cog):
     def __init__(self, bot: LossdiaFAQ) -> None:
         self.bot = bot
 
@@ -134,4 +134,4 @@ class ModeratorCog(commands.Cog):
 
 
 async def setup(bot: LossdiaFAQ) -> None:
-    await bot.add_cog(ModeratorCog(bot))
+    await bot.add_cog(Moderator(bot))

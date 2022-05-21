@@ -8,7 +8,7 @@ from lossdiafaq.client import LossdiaFAQ
 from lossdiafaq.services.discord.embed import NormalEmbed
 from lossdiafaq.services.discord.context import Context, FAQContext
 
-class FAQCog(commands.Cog):
+class FAQ(commands.Cog):
     def __init__(self, bot: LossdiaFAQ) -> None:
         self.bot = bot
         self.image_url_regex = re.compile(r'^https?:\/\/(?:[a-z0-9\-]+\.)+[a-z]{2,6}(?:\/[^\/#?]+)+\.(?:jpg|gif|png)$')
@@ -56,4 +56,4 @@ class FAQCog(commands.Cog):
 
 
 async def setup(bot: LossdiaFAQ) -> None:
-    await bot.add_cog(FAQCog(bot))
+    await bot.add_cog(FAQ(bot))
