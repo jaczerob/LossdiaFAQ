@@ -4,7 +4,6 @@ import asyncio
 import yaml
 
 from lossdiafaq.client import LossdiaFAQ
-from lossdiafaq.services import logging
 
 
 async def main(test: bool):

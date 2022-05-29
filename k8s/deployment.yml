@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lossdiafaq-deployment
+  namespace: lossdiafaq
+  labels:
+    app: lossdiafaq
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: lossdiafaq
+  template:
+    metadata:
+      labels:
+        app: lossdiafaq
+    spec:
+      containers:
+      - name: lossdiafaq
+        image: ghcr.io/jaczerob/lossdiafaq:main
+        imagePullPolicy: Always
+        env:
+        - name: DISCORD_BOT_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: lossdiafaq-secrets
+              key: discord_bot_token
