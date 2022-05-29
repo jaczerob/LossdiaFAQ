@@ -1,6 +1,7 @@
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta
 from typing import Optional
+from dateutil import tz
 
 from discord.ext import commands
 import discord.utils
@@ -116,15 +117,15 @@ class Utility(commands.Cog):
     )
     async def _time(self, ctx: Context):
         """displays the current server time"""
-        time = datetime.utcnow().strftime('%d %b, %Y %H:%M:%S')
+        server_time = datetime.utcnow().strftime('%d %b, %Y %H:%M:%S')
 
         tomorrow = datetime.utcnow() + timedelta(1)
-        midnight = datetime(year=tomorrow.year, month=tomorrow.month, day=tomorrow.day,
-                            hour=0, minute=0, second=0)
-        reset_delta = (midnight - datetime.utcnow())
-        time_until_reset = str(reset_delta).split('.')[0]
+        midnight = datetime(year=tomorrow.year, month=tomorrow.month, day=tomorrow.day, hour=0, minute=0, second=0, tzinfo=tz.UTC)
+
+        local_reset_time = discord.utils.format_dt(midnight)
+        time_until_reset = discord.utils.format_dt(midnight, style="R")
         
-        embed = NormalEmbed(title="Server Time", description=f"The current server time is: {time} UTC\nTime until reset: {time_until_reset}", author=ctx.author)
+        embed = NormalEmbed(title="Server Time", description=f"The current server time is: {server_time} UTC\nIn your local time, daily reset is at {local_reset_time} ({time_until_reset})", author=ctx.author)
         return await ctx.reply(embed=embed)
 
     @commands.hybrid_command(
