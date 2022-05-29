@@ -3,12 +3,11 @@ from pathlib import Path
 import discord
 
 BOT_OWNER_ID = 476226626464645135
-
 BOT_LOGGING_CHANNEL_ID = 917903722871398421
 BOT_EXTENSIONS_PATH = Path("./lossdiafaq/extensions")
-
 BOT_EMBED_COLOR_NORMAL = discord.Color.from_str("#bbbefe")
 BOT_EMBED_COLOR_ERROR = discord.Color.red()
+BOT_PREFIX = "$"
 
 MONGO_PORT = 27017
 MONGO_DATABASE = "lossdia"

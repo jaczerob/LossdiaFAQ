@@ -1,28 +1,14 @@
-import argparse
 import asyncio
+import os
 
-import yaml
-
+from lossdiafaq import static
 from lossdiafaq.client import LossdiaFAQ
 
 
-async def main(test: bool):
-    with open('lossdia.yaml') as f:
-        config = yaml.load(f, Loader=yaml.FullLoader)
-
-    if test:
-        token = config["test"]["token"]
-        prefix = config["test"]["prefix"]
-    else:
-        token = config["prod"]["token"]
-        prefix = config["prod"]["prefix"]
-
-    async with LossdiaFAQ(prefix) as client:
-        await client.start(token)
+async def main():
+    async with LossdiaFAQ(static.BOT_PREFIX) as client:
+        await client.start(os.environ["DISCORD_BOT_TOKEN"])
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--test', action=argparse.BooleanOptionalAction)
-    args = parser.parse_args()
-    asyncio.run(main(args.test))
+    asyncio.run(main())
