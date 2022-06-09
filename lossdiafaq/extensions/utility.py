@@ -258,6 +258,85 @@ class Utility(commands.Cog):
         return await ctx.reply(embeds=embeds)
 
     @commands.hybrid_command(
+        name="aees",
+        description="simulates EES from start to end",
+        usage="<start> <end> <protect delta>",
+    )
+    async def _aees(self, ctx: Context, start: int, end: int, protect_delta: int):
+        """simulates AEES from start to end
+        
+        start must be a number between 0 and 14
+        end must be a number between 1 and 15
+        protect delta must be a number between 0 and 4
+
+        protect delta is the number of stars before a safety point (10, 15) where you will use a SF Prot scroll
+        """
+
+        if ctx.interaction is not None:
+            await ctx.defer()
+
+        ees = EESCalculator(start, end, protect_delta, aees=True)
+        message = await ctx.reply(f'Running simulation of AEES from {start}* to {end}* {static.LOSSDIA_EES_SAMPLES} times...')
+        
+        try:
+            await self.bot.loop.run_in_executor(self.ees_executor, ees.simulate)
+            await message.delete()
+        except EESArgumentError as error:
+            await message.delete()
+            return await ctx.reply(embed=ErrorEmbed(
+                title="AEES Simulator Argument Error",
+                description=str(error),
+            ))
+
+        ees_embed = NormalEmbed(
+            title="AEES Simulator",
+            description="Took {:,.02f} AEES on average over {:,} samples to go from {}* to {}*".format(ees.avg_attempts, static.LOSSDIA_EES_SAMPLES, start, end),
+            author=ctx.author,
+        )
+
+        ees_label_field = EmbedField(
+            name=  "Stats",
+            value= "Average Used\nMinimum Used\nMaximum Used\nAverage Meso Used\nMinimum Meso Used\nMaximum Meso Used\nAverage COGs Used\nMinimum COGs Used\nMaximum COGs Used\nAverage EES Used\nMinimum EES Used\nMaximum EES Used\n",
+            inline=True,
+        )
+
+        ees_value_field_description = "{:,.02f}\n{:,}\n{:,}\n{:,.02f}\n{:,}\n{:,}\n{:,.02f}\n{:,}\n{:,}\n{:,.02f}\n{:,}\n{:,}"
+        ees_value_field = EmbedField(
+            name="Values",
+            value=ees_value_field_description.format(ees.avg_attempts, ees.min_attempts, ees.max_attempts, ees.avg_meso_used, ees.min_meso_used, ees.max_meso_used, ees.avg_cogs_used, ees.min_cogs_used, ees.max_cogs_used, ees.avg_ees_used, ees.min_ees_used, ees.max_ees_used, ),
+            inline=True,
+        )
+
+        ees_embed.add_field(ees_label_field)
+        ees_embed.add_field(ees_value_field)
+        embeds = [ees_embed, ]
+
+        if ees.avg_sfprots_used > 0.0:
+            sfprot_label_field = EmbedField(
+                name=  "Stats",
+                value= "Average Used\nMinimum Used\nMaximum Used\nAverage VP/Credits Used\nMinimum VP/Credits Used\nMaximum VP/Credits Used",
+                inline=True,
+            )
+
+            sfprot_value_field_description = "{:,.02f}\n{:,}\n{:,}\n{:,.02f}/{:,.02f}\n{:,}/{:,}\n{:,}/{:,}"
+            sfprot_value_field = EmbedField(
+                name=  "Values",
+                value= sfprot_value_field_description.format(ees.avg_sfprots_used, ees.min_sfprots_used, ees.max_sfprots_used, ees.avg_vp_used, ees.avg_credits_used, ees.min_vp_used, ees.min_credits_used, ees.max_vp_used, ees.max_credits_used),
+                inline=True,
+            )
+            
+            sfprot_embed = NormalEmbed(
+                title="AEES Simulator",
+                description="Took {:,.02f} SF protects on average over {:,} samples to go from {}* to {}*".format(ees.avg_sfprots_used, static.LOSSDIA_EES_SAMPLES, start, end),
+            )
+
+            sfprot_embed.add_field(sfprot_label_field)
+            sfprot_embed.add_field(sfprot_value_field)
+            embeds.append(sfprot_embed)
+
+        return await ctx.reply(embeds=embeds)
+
+    @commands.hybrid_command(
         name="user",
         description="shows your user info",
     )
