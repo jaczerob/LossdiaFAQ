@@ -1,6 +1,6 @@
 #!/bin/bash
 
-./server &
+./server/bin/server &
 python3 client &
 
 wait -n
