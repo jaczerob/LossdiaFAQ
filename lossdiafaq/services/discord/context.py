@@ -38,6 +38,13 @@ class Context(commands.Context):
 
         return self.channel.permissions_for(self.author).manage_messages
 
+    async def reply(self, content: str | None = None, **kwargs) -> Message:
+        if self.message.reference:
+            if message := self.message.reference.cached_message:
+                return await message.reply(content, **kwargs)
+
+        return await super().reply(content, **kwargs)
+
 
 class FAQContext(Context):
     def __init__(self, **kwargs):
