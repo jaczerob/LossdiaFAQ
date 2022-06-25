@@ -1,6 +1,7 @@
 import functools
 
 from discord.ext import commands
+from loguru import logger
 
 from windiafaq.discord import context
 
@@ -19,6 +20,11 @@ class TCPCommand(commands.Command):
         else:
             command = ctx.command.name
 
+        logger.info("sending command: {} (args={}, kwargs={})", command, args, kwargs)
         await ctx.bot.tcp.send_command(command, *args, **kwargs)
+        
+        logger.info("waiting for response from server for command: {}", command)
         resp = await ctx.bot.tcp.wait_response()
+
+        logger.info("got response from server for command: {}", command)
         return await ctx.reply(resp.content, embeds=resp.embeds())
