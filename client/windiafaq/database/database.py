@@ -1,3 +1,5 @@
+import os
+
 from typing_extensions import Self
 from pymongo.errors import DuplicateKeyError
 from pymongo.mongo_client import MongoClient
@@ -11,7 +13,7 @@ __all__ = ["FAQDatabase"]
 
 class FAQDatabase:
     def __init__(self):
-        self._client = MongoClient(port=27017, socketTimeoutMS=5)
+        self._client = MongoClient(os.environ["MONGO_CONNECT_URI"], socketTimeoutMS=500)
         _db = self._client.get_database(static.MONGO_DATABASE)
 
         self._commands = _db.get_collection(static.MONGO_COLLECTION_COMMANDS)

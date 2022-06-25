@@ -4,7 +4,8 @@ services:
     env_file:
       - .env
     environment:
-      - SERVER_CONNECT_URI=tcp://0.0.0.0:8080
+      - SERVER_CONNECT_URI=tcp://serverd:8080
+      - MONGO_CONNECT_URI=mongodb://mongo:27017
     build: ./client
     restart: always
 
