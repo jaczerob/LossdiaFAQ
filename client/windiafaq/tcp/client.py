@@ -1,6 +1,4 @@
-import asyncio
-
-from async_timeout import timeout
+from loguru import logger
 import zmq
 import zmq.asyncio
 
@@ -21,7 +19,8 @@ class TCPClient:
         return Response(**await self.sock.recv_json(0))
 
     def connect(self) -> None:
-        self.sock.bind(self.endpoint)
+        self.sock.connect(self.endpoint)
+        logger.info("bound to {}", self.endpoint)
 
     def disconnect(self) -> None:
         self.sock.close(5)

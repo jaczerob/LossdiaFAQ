@@ -32,7 +32,7 @@ func NewServer(endpoint string) (s *Server, err error) {
 }
 
 func (s *Server) Connect() (err error) {
-	return s.socket.Connect(s.endpoint)
+	return s.socket.Bind(s.endpoint)
 }
 
 func (s *Server) Close() (err error) {
@@ -40,6 +40,9 @@ func (s *Server) Close() (err error) {
 }
 
 func (s *Server) Listen() (err error) {
+	log.SetPrefix("server")
+	log.Println("waiting for command...")
+
 	msg, err := s.socket.Recv(0)
 	if err != nil {
 		return
