@@ -3,12 +3,14 @@ services:
   client:
     env_file:
       - .env
+    environment:
+      - SERVER_CONNECT_URI=tcp://server:8080
     build: ./client
     restart: always
 
   server:
-    env_file:
-      - .env
+    environment:
+      - SERVER_LISTEN_URI=tcp://0.0.0.0:8080
     expose:
       - 8080
     build: ./server

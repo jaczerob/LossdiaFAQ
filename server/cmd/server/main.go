@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	server, err := server.NewServer(os.Getenv("TCP_ENDPOINT"))
+	server, err := server.NewServer(os.Getenv("SERVER_LISTEN_URI"))
 	if err != nil {
 		log.Fatal(err)
 	}

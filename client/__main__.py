@@ -5,7 +5,7 @@ from windiafaq.discord.bot import WindiaFAQ
 
 
 async def main():
-    await WindiaFAQ("%", os.environ["TCP_ENDPOINT"]).start(os.environ["DISCORD_TOKEN"])
+    await WindiaFAQ("%", os.environ["SERVER_CONNECT_URI"]).start(os.environ["DISCORD_TOKEN"])
 
 
 if __name__ == "__main__":
