@@ -18,6 +18,11 @@ class TCPClient:
     async def wait_response(self) -> Response:
         return Response(**await self.sock.recv_json(0))
 
+    def reconnect(self) -> None:
+        self.sock.close()
+        self.sock = self.context.socket(zmq.REQ)
+        self.sock.connect(self.endpoint)
+
     def connect(self) -> None:
         self.sock.connect(self.endpoint)
         logger.info("bound to {}", self.endpoint)

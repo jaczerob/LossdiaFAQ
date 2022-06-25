@@ -127,16 +127,14 @@ func (e *EESCalculator) enhance(level float64) (newLevel float64, sfProtUsed boo
 	eesResult := float64(rand.Intn(101)) <= rate
 
 	levelsFromSafepoint := math.Mod(level, 5.)
-	sfProtUsed = (levelsFromSafepoint >= (5. - e.Delta)) && level > 5
+	sfProtUsed = levelsFromSafepoint >= (5.-e.Delta) && level > 5
 
-	if !eesResult && levelsFromSafepoint == 0. {
-		newLevel = level
-	} else if !eesResult {
-		if !sfProtUsed {
-			newLevel = level - 1
-		}
-	} else {
+	if eesResult {
 		newLevel = level + 1
+	} else if !eesResult && !sfProtUsed && levelsFromSafepoint != 0 {
+		newLevel = level - 1
+	} else {
+		newLevel = level
 	}
 
 	return

@@ -28,6 +28,7 @@ class TCPCommand(commands.Command):
                 await ctx.bot.tcp.send_command(command, *args, **kwargs)
         except asyncio.TimeoutError as exc:
             logger.opt(exception=exc).error("failed to send command")
+            ctx.bot.tcp.reconnect()
             return
 
         try:
@@ -36,6 +37,7 @@ class TCPCommand(commands.Command):
                 resp = await ctx.bot.tcp.wait_response()
         except asyncio.TimeoutError as exc:
             logger.opt(exception=exc).error("server timeout")
+            ctx.bot.tcp.reconnect()
             return
 
         logger.info("got response from server for command: {}", command)
