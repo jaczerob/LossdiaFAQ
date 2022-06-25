@@ -45,14 +45,6 @@ func (f *Flame) Run(c *server.Command) (r *server.ReturnData, err error) {
 			},
 		},
 	}
-	//		"ItemEFlameMinStats":    flameCalculator.ItemEFlameMinStats,
-	//		"ItemEFlameMaxStats":    flameCalculator.ItemEFlameMaxStats,
-	//		"ItemPFlameMinStats":    flameCalculator.ItemPFlameMinStats,
-	//		"ItemPFlameMaxStats":    flameCalculator.ItemPFlameMaxStats,
-	//		"OverallEFlameMinStats": flameCalculator.OverallEFlameMinStats,
-	//		"OverallEFlameMaxStats": flameCalculator.OverallEFlameMaxStats,
-	//		"OverallPFlameMinStats": flameCalculator.OverallPFlameMinStats,
-	//		"OverallPFlameMaxStats": flameCalculator.OverallPFlameMaxStats,
-	//	}, nil
+
 	return
 }
