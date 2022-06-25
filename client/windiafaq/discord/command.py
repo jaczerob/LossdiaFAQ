@@ -1,5 +1,7 @@
+import asyncio
 import functools
 
+from async_timeout import timeout
 from discord.ext import commands
 from loguru import logger
 
@@ -20,11 +22,21 @@ class TCPCommand(commands.Command):
         else:
             command = ctx.command.name
 
-        logger.info("sending command: {} (args={}, kwargs={})", command, args, kwargs)
-        await ctx.bot.tcp.send_command(command, *args, **kwargs)
-        
-        logger.info("waiting for response from server for command: {}", command)
-        resp = await ctx.bot.tcp.wait_response()
+        try:
+            async with timeout(5.0):
+                logger.info("sending command: {} (args={}, kwargs={})", command, args, kwargs)
+                await ctx.bot.tcp.send_command(command, *args, **kwargs)
+        except asyncio.TimeoutError as exc:
+            logger.opt(exception=exc).error("failed to send command")
+            return
+
+        try:
+            async with timeout(5.0):
+                logger.info("waiting for response from server for command: {}", command)
+                resp = await ctx.bot.tcp.wait_response()
+        except asyncio.TimeoutError as exc:
+            logger.opt(exception=exc).error("server timeout")
+            return
 
         logger.info("got response from server for command: {}", command)
         return await ctx.reply(resp.content, embeds=resp.embeds())

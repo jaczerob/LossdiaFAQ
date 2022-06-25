@@ -18,11 +18,7 @@ class TCPClient:
         return await self.sock.send_json({"command": command, "args": args})
 
     async def wait_response(self) -> Response:
-        try:
-            async with timeout(5.0):
-                return Response(**await self.sock.recv_json(0))
-        except asyncio.TimeoutError:
-            return Response(error="no response from the server/timeout")
+        return Response(**await self.sock.recv_json(0))
 
     def connect(self) -> None:
         self.sock.bind(self.endpoint)
