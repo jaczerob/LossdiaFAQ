@@ -3,6 +3,7 @@ package calculator
 import (
 	"errors"
 	"fmt"
+	"log"
 	"math"
 	"strings"
 
@@ -27,34 +28,36 @@ func (f *Flags) parse() (err error) {
 	}
 
 	if strings.Contains(f.Flags, " ") {
-		return errors.New("Flags cannot contain spaces (ex. -as instead of -a -s)")
+		return errors.New("Flags cannot contain spaces (ex. -es instead of -e -s)")
 	}
 
 	for len(f.Flags) > 0 {
-		flag := f.Flags[0]
+		flag := f.Flags[0:1]
 		f.Flags = f.Flags[1:]
 
+		log.Println(flag, f.Flags)
+
 		switch flag {
-		case 'e':
+		case "e":
 			if f.HasDisadv {
 				return errors.New("Cannot have both elemental advantage and disadvantage")
 			}
 
 			f.HasAdv = true
-		case 'd':
+		case "d":
 			if f.HasAdv {
 				return errors.New("Cannot have both elemental advantage and disadvantage")
 			}
 
 			f.HasDisadv = true
-		case 'l' | 's':
+		case "l", "s":
 			if f.HasStaff {
 				return errors.New("Cannot have two staves")
 			}
 
 			f.HasStaff = true
 		default:
-			return errors.New(fmt.Sprintf("Unknown flag: %b", flag))
+			return errors.New(fmt.Sprintf("Unknown flag: %s", flag))
 		}
 	}
 

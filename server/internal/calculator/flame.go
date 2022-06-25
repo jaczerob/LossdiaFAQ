@@ -39,9 +39,9 @@ func (c *FlameCalculator) Calculate() {
 }
 
 func (c *FlameCalculator) calculateItem(r float64) float64 {
-	return (math.Ceil(c.level/20) + 1) * r
+	return (math.Floor(c.level/20) + 1) * r
 }
 
 func (c *FlameCalculator) calculateOverall(r float64) float64 {
-	return (math.Ceil(c.level*static.WindiaFlameOverallMultiplier/20) + 1) * r
+	return (math.Floor(c.level*static.WindiaFlameOverallMultiplier/20) + 1) * r
 }
