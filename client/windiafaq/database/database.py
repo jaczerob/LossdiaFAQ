@@ -11,7 +11,7 @@ __all__ = ["FAQDatabase"]
 
 class FAQDatabase:
     def __init__(self):
-        self._client = MongoClient(port=static.MONGO_PORT, socketTimeoutMS=5)
+        self._client = MongoClient("mongodb://mongo:27017", socketTimeoutMS=5)
         _db = self._client.get_database(static.MONGO_DATABASE)
 
         self._commands = _db.get_collection(static.MONGO_COLLECTION_COMMANDS)

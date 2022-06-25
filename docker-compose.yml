@@ -10,10 +10,12 @@ services:
     env_file:
       - .env
     expose:
-      - "8080"
+      - 8080
     build: ./server
     restart: always
 
   mongo:
-    image: mongo
+    image: mongo:latest
     restart: always
+    expose:
+      - 27017
