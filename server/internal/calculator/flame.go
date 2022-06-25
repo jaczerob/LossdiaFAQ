@@ -27,13 +27,21 @@ func NewFlameCalculator(level float64) *FlameCalculator {
 }
 
 func (c *FlameCalculator) Calculate() {
-	c.ItemEFlameMinStats = (math.Ceil(c.level/20) + 1) * static.WindiaFlameEFlameMinRange
-	c.ItemEFlameMaxStats = (math.Ceil(c.level/20) + 1) * static.WindiaFlameEFlameMaxRange
-	c.ItemPFlameMinStats = (math.Ceil(c.level/20) + 1) * static.WindiaFlamePFlameMinRange
-	c.ItemPFlameMaxStats = (math.Ceil(c.level/20) + 1) * static.WindiaFlamePFlameMaxRange
+	c.ItemEFlameMinStats = c.calculateItem(static.WindiaFlameEFlameMinRange)
+	c.ItemEFlameMaxStats = c.calculateItem(static.WindiaFlameEFlameMaxRange)
+	c.ItemPFlameMinStats = c.calculateItem(static.WindiaFlamePFlameMinRange)
+	c.ItemPFlameMaxStats = c.calculateItem(static.WindiaFlamePFlameMaxRange)
 
-	c.OverallEFlameMinStats = c.ItemEFlameMinStats * static.WindiaFlameOverallMultiplier
-	c.OverallEFlameMaxStats = c.ItemEFlameMaxStats * static.WindiaFlameOverallMultiplier
-	c.OverallPFlameMinStats = c.ItemPFlameMinStats * static.WindiaFlameOverallMultiplier
-	c.OverallPFlameMaxStats = c.ItemPFlameMaxStats * static.WindiaFlameOverallMultiplier
+	c.OverallEFlameMinStats = c.calculateOverall(static.WindiaFlameOverallMultiplier)
+	c.OverallEFlameMaxStats = c.calculateOverall(static.WindiaFlameOverallMultiplier)
+	c.OverallPFlameMinStats = c.calculateOverall(static.WindiaFlameOverallMultiplier)
+	c.OverallPFlameMaxStats = c.calculateOverall(static.WindiaFlameOverallMultiplier)
+}
+
+func (c *FlameCalculator) calculateItem(r float64) float64 {
+	return (math.Ceil(c.level/20) + 1) * r
+}
+
+func (c *FlameCalculator) calculateOverall(r float64) float64 {
+	return (math.Ceil(c.level*2/20) + 1) * r
 }
