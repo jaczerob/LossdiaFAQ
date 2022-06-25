@@ -6,7 +6,7 @@ import discord.utils
 
 from windiafaq import static
 from windiafaq.discord.bot import WindiaFAQ
-from windiafaq.discord.command import IPCCommand
+from windiafaq.discord.command import TCPCommand
 from windiafaq.discord.context import Context
 from windiafaq.discord.embed import NormalEmbed
 
@@ -29,7 +29,7 @@ class Utility(commands.Cog):
         description="shows the flame range for a certain level of gear",
         usage="<item level>",
         aliases=["flames",],
-        cls=IPCCommand,
+        cls=TCPCommand,
     )
     async def _flame(self, ctx: Context, level: int):
         """shows the flame range for a certain level of gear"""
@@ -38,7 +38,7 @@ class Utility(commands.Cog):
         name="ees",
         description="simulates EES from start to end",
         usage="<start> <end> <protect delta>",
-        cls=IPCCommand,
+        cls=TCPCommand,
     )
     async def _ees(self, ctx: Context, start: int, end: int, protect_delta: int):
         """simulates EES from start to end
@@ -53,7 +53,7 @@ class Utility(commands.Cog):
         name="aees",
         description="simulates AEES from start to end",
         usage="<start> <end> <protect delta>",
-        cls=IPCCommand,
+        cls=TCPCommand,
     )
     async def _aees(self, ctx: Context, start: int, end: int, protect_delta: int):
         """simulates EES from start to end
@@ -68,7 +68,7 @@ class Utility(commands.Cog):
         name="magic",
         description="shows how much magic is needed to one shot a monster with given HP",
         usage="<hp> <spell attack> [<flags>]",
-        cls=IPCCommand,
+        cls=TCPCommand,
     )
     async def _magic(self, ctx: commands.Context, hp: int, spell_attack: int, flags: str = ""):
         """shows how much magic is needed to one shot a monster with given HP

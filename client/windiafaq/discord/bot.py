@@ -11,7 +11,7 @@ from windiafaq.database.database import FAQDatabase
 from windiafaq.discord.context import Context
 from windiafaq.discord.embed import ErrorEmbed
 from windiafaq.discord import extensions
-from windiafaq.tcp.client import IPCClient
+from windiafaq.tcp.client import TCPClient
 
 
 def format_traceback(tb: str) -> tuple[str | None, str]:
@@ -42,14 +42,14 @@ def format_traceback(tb: str) -> tuple[str | None, str]:
 
 
 class WindiaFAQ(commands.Bot):
-    def __init__(self, prefix: str, ipc_endpoint: str) -> None:
+    def __init__(self, prefix: str, tcp_endpoint: str) -> None:
         help_command = commands.DefaultHelpCommand(command_attrs=dict(hidden=True))
         super().__init__(prefix, help_command=help_command, owner_id=static.BOT_OWNER_ID, intents=discord.Intents.all(), activity=discord.Game(f"{prefix}help"))
-        self.ipc = IPCClient(ipc_endpoint)
+        self.tcp = TCPClient(tcp_endpoint)
         self.db = FAQDatabase()
 
     async def setup_hook(self) -> None:
-        self.ipc.connect()
+        self.tcp.connect()
 
         for extension in extensions.EXTENSIONS:
             try:
@@ -59,7 +59,7 @@ class WindiaFAQ(commands.Bot):
                 logger.opt(exception=True).error("could not load extension: {}", extension)
 
     async def close(self) -> None:
-        self.ipc.disconnect()
+        self.tcp.disconnect()
         return await super().close()
 
     async def on_message(self, message: discord.Message) -> None:

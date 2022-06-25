@@ -1,2 +1,2 @@
-from .client import IPCClient
+from .client import TCPClient
 from .response import Response

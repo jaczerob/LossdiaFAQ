@@ -7,7 +7,7 @@ import zmq.asyncio
 from windiafaq.tcp.response import Response
 
 
-class IPCClient:
+class TCPClient:
     def __init__(self, endpoint: str) -> None:
         self.endpoint = endpoint
 
@@ -27,7 +27,7 @@ class IPCClient:
             return Response(error="no response from the server/timeout")
 
     def connect(self) -> None:
-        self.sock.bind("tcp://*:8080")
+        self.sock.bind(self.endpoint)
 
     def disconnect(self) -> None:
         self.sock.close(5)
