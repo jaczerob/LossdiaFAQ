@@ -53,14 +53,20 @@ class FlameCalculator:
         
         Overalls get double flame stats
         """
-        self.item_eflame_min_stats = (math.ceil(self.level / 20) + 1) * static.LOSSDIA_FLAME_EFLAME_MIN_RANGE
-        self.item_eflame_max_stats = (math.ceil(self.level / 20) + 1) * static.LOSSDIA_FLAME_EFLAME_MAX_RANGE
-        self.item_pflame_min_stats = (math.ceil(self.level / 20) + 1) * static.LOSSDIA_FLAME_PFLAME_MIN_RANGE
-        self.item_pflame_max_stats = (math.ceil(self.level / 20) + 1) * static.LOSSDIA_FLAME_PFLAME_MAX_RANGE
-
-        self.overall_eflame_min_stats = self.item_eflame_min_stats * 2
-        self.overall_eflame_max_stats = self.item_eflame_max_stats * 2
-        self.overall_pflame_min_stats = self.item_pflame_min_stats * 2
-        self.overall_pflame_max_stats = self.item_pflame_max_stats * 2
+        self.item_eflame_min_stats = self._calculate_item(static.LOSSDIA_FLAME_EFLAME_MIN_RANGE)
+        self.item_eflame_max_stats = self._calculate_item(static.LOSSDIA_FLAME_EFLAME_MAX_RANGE)
+        self.item_pflame_min_stats = self._calculate_item(static.LOSSDIA_FLAME_PFLAME_MIN_RANGE)
+        self.item_pflame_max_stats = self._calculate_item(static.LOSSDIA_FLAME_PFLAME_MAX_RANGE)
+        
+        self.overall_eflame_min_stats = self._calculate_overall(static.LOSSDIA_FLAME_EFLAME_MIN_RANGE)
+        self.overall_eflame_max_stats = self._calculate_overall(static.LOSSDIA_FLAME_EFLAME_MAX_RANGE)
+        self.overall_pflame_min_stats = self._calculate_overall(static.LOSSDIA_FLAME_PFLAME_MIN_RANGE)
+        self.overall_pflame_max_stats = self._calculate_overall(static.LOSSDIA_FLAME_PFLAME_MAX_RANGE)
 
         return
+
+    def _calculate_item(self, multiplier: int):
+        return (math.floor(self.level / 20) + 1) * multiplier
+
+    def _calculate_overall(self, multiplier: int):
+        return (math.floor(self.level * 2 / 20) + 1) * multiplier
