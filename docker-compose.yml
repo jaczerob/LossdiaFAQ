@@ -1,0 +1,13 @@
+version: '3'
+services:
+  client:
+    build: ./client
+    restart: always
+
+  server:
+    build: ./server
+    restart: always
+
+  mongo:
+    image: mongo
+    restart: always
