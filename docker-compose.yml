@@ -1,0 +1,24 @@
+version: '3'
+services:
+  clientd:
+    env_file:
+      - .env
+    environment:
+      - SERVER_CONNECT_URI=tcp://serverd:8080
+      - MONGO_CONNECT_URI=mongodb://mongo:27017
+    build: ./client
+    restart: always
+
+  serverd:
+    environment:
+      - SERVER_LISTEN_URI=tcp://0.0.0.0:8080
+    expose:
+      - 8080
+    build: ./server
+    restart: always
+
+  mongo:
+    image: mongo:latest
+    restart: always
+    expose:
+      - 27017

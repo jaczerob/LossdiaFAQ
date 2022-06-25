@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 __pycache__/
 *.py[cod]
 *$py.class
@@ -22,3 +23,10 @@ dist/
 *.db
 logs/
 *.log
+=======
+.venv/
+__pycache__/
+.env.*
+.env
+*.code-workspace
+>>>>>>> rewrite
