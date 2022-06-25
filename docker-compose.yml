@@ -9,6 +9,8 @@ services:
   server:
     env_file:
       - .env
+    expose:
+      - "8080"
     build: ./server
     restart: always
 
