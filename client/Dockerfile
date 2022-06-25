@@ -6,4 +6,4 @@ RUN pip3 install -r requirements.txt
 
 WORKDIR /
 
-CMD [ "python3", "." ]
+CMD [ "python3", "client" ]

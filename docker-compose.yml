@@ -1,10 +1,14 @@
 version: '3'
 services:
   client:
+    env_file:
+      - .env
     build: ./client
     restart: always
 
   server:
+    env_file:
+      - .env
     build: ./server
     restart: always
 
