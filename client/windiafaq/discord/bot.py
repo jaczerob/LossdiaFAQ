@@ -11,7 +11,7 @@ from windiafaq.database.database import FAQDatabase
 from windiafaq.discord.context import Context
 from windiafaq.discord.embed import ErrorEmbed
 from windiafaq.discord import extensions
-from windiafaq.ipc.client import IPCClient
+from windiafaq.tcp.client import IPCClient
 
 
 def format_traceback(tb: str) -> tuple[str | None, str]:

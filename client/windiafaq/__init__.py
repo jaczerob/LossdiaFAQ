@@ -1,4 +1,4 @@
 from .discord import *
-from .ipc import *
+from .tcp import *
 from .static import *
 from .utils import *
