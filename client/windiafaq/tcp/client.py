@@ -1,3 +1,5 @@
+import asyncio
+
 from loguru import logger
 import zmq
 import zmq.asyncio
@@ -13,6 +15,9 @@ class TCPClient:
         self.sock: zmq.asyncio.Socket = self.context.socket(zmq.REQ)
 
     async def send_command(self, command: str, *args: list[int | str | bool]) -> None:
+        while self.sock._state == zmq.POLLIN:
+            await asyncio.sleep(1)
+
         return await self.sock.send_json({"command": command, "args": args})
 
     async def wait_response(self) -> Response:
