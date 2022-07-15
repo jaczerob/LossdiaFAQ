@@ -2,8 +2,8 @@ import functools
 
 from discord.ext import commands
 from loguru import logger
-from client.windiafaq.discord.embed import ErrorEmbed
-from client.windiafaq.tcp.response import ServerResponseError
+from windiafaq.discord.embed import ErrorEmbed
+from windiafaq.tcp.response import ServerResponseError
 
 from windiafaq.discord import context
 
