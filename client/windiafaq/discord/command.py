@@ -1,9 +1,9 @@
-import asyncio
 import functools
 
-from async_timeout import timeout
 from discord.ext import commands
 from loguru import logger
+from client.windiafaq.discord.embed import ErrorEmbed
+from client.windiafaq.tcp.response import ServerResponseError
 
 from windiafaq.discord import context
 
@@ -25,8 +25,12 @@ class TCPCommand(commands.Command):
         logger.info("sending command: {} (args={}, kwargs={})", command, args, kwargs)
         await ctx.bot.tcp.send_command(command, *args, **kwargs)
 
-        logger.info("waiting for response from server for command: {}", command)
-        resp = await ctx.bot.tcp.wait_response()
-
-        logger.info("got response from server for command: {}", command)
-        return await ctx.reply(resp.content, embeds=resp.embeds())
+        try :
+            logger.info("waiting for response from server for command: {}", command)
+            resp = await ctx.bot.tcp.wait_response()
+        except ServerResponseError as e:
+            return await ctx.reply(embed=ErrorEmbed(title="Command Error!", description=str(e)))
+        else:
+            return await ctx.reply(resp.content, embeds=resp.embeds())
+        finally:
+            logger.info("got response from server for command: {}", command)
